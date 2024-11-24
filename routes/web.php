@@ -8,6 +8,9 @@ Route::get('/', function () {
 Route::get('/home', function () {
     return view('home');
 });
+Route::get('/ALDU', function () {
+    return view('ALDU');
+});
 
 Route::middleware([
     'auth:sanctum',
