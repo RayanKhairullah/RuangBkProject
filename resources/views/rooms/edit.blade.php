@@ -1,16 +1,19 @@
-<x-layouts.app :title="__('Buat Jadwal Konseling')">
-    <h1 class="text-2xl font-bold">{{ __('Buat Jadwal Konseling') }}</h1>
+<x-layouts.app :title="__('Edit Room')">
+    <h1 class="text-2xl font-bold mb-4">{{ __('Edit Room') }}</h1>
 
-    <form action="{{ route('penjadwalan.store') }}" method="POST" class="mt-4">
+    <form action="{{ route('rooms.update', $room) }}" method="POST" class="mt-4">
         @csrf
+        @method('PUT')
 
         <!-- Pilih Jurusan -->
         <div class="mb-4">
             <label for="jurusan_id" class="block text-sm font-medium text-gray-700">{{ __('Jurusan') }}</label>
             <select name="jurusan_id" id="jurusan_id" class="form-input w-full" required>
-                <option value="">{{ __('Pilih Jurusan') }}</option>
                 @foreach ($jurusans as $jurusan)
-                    <option value="{{ $jurusan->id }}">{{ $jurusan->nama_jurusan }}</option>
+                    <option value="{{ $jurusan->id }}"
+                        {{ old('jurusan_id', $room->jurusan_id) == $jurusan->id ? 'selected' : '' }}>
+                        {{ $jurusan->nama_jurusan }}
+                    </option>
                 @endforeach
             </select>
             @error('jurusan_id')
@@ -18,38 +21,23 @@
             @enderror
         </div>
 
-        <!-- Pilih Room -->
+        <!-- Tingkatan Room -->
         <div class="mb-4">
-            <label for="kelas_id" class="block text-sm font-medium text-gray-700">{{ __('Room') }}</label>
-            <select name="kelas_id" id="kelas_id" class="form-input w-full" required>
-                <option value="">{{ __('Pilih Room') }}</option>
-                @foreach ($rooms as $room)
-                    <option value="{{ $room->id }}">{{ $room->tingkatan_rooms }}</option>
-                @endforeach
-            </select>
-            @error('kelas_id')
+            <label for="tingkatan_rooms" class="block text-sm font-medium text-gray-700">{{ __('Tingkatan Kelas') }}</label>
+            <input
+                type="text"
+                name="tingkatan_rooms"
+                id="tingkatan_rooms"
+                class="form-input w-full"
+                value="{{ old('tingkatan_rooms', $room->tingkatan_rooms) }}"
+                required
+            >
+            @error('tingkatan_rooms')
                 <span class="text-red-500 text-sm">{{ $message }}</span>
             @enderror
         </div>
 
-        <!-- Lokasi -->
-        <div class="mb-4">
-            <label for="lokasi" class="block text-sm font-medium text-gray-700">{{ __('Lokasi') }}</label>
-            <input type="text" name="lokasi" id="lokasi" class="form-input w-full" value="{{ old('lokasi') }}" required>
-            @error('lokasi')
-                <span class="text-red-500 text-sm">{{ $message }}</span>
-            @enderror
-        </div>
-
-        <!-- Tanggal -->
-        <div class="mb-4">
-            <label for="tanggal" class="block text-sm font-medium text-gray-700">{{ __('Tanggal') }}</label>
-            <input type="datetime-local" name="tanggal" id="tanggal" class="form-input w-full" value="{{ old('tanggal') }}" required>
-            @error('tanggal')
-                <span class="text-red-500 text-sm">{{ $message }}</span>
-            @enderror
-        </div>
-
-        <button type="submit" class="btn btn-primary">{{ __('Simpan') }}</button>
+        <button type="submit" class="btn btn-primary">{{ __('Update') }}</button>
+        <a href="{{ route('rooms.index') }}" class="btn btn-secondary">{{ __('Cancel') }}</a>
     </form>
 </x-layouts.app>

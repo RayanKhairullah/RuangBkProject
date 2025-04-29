@@ -3,6 +3,9 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use App\Exports\BiodataExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
@@ -57,5 +60,14 @@ class UserController extends Controller
         $user->delete();
 
         return redirect()->route('users.index')->with('success', 'User deleted successfully.');
+    }
+    public function downloadBiodata(User $user)
+    {
+        if (! $user->biodata) {
+            return back()->withError('Biodata tidak ditemukan.');
+        }
+
+        $fileName = 'biodata_' . str()->slug($user->name) . '.xlsx';
+        return Excel::download(new BiodataExport($user), $fileName);
     }
 }

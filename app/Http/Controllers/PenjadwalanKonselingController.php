@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Mail\KonselingNotification;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
+use App\Exports\PenjadwalanKonselingExport;        
+use Maatwebsite\Excel\Facades\Excel; 
 
 class PenjadwalanKonselingController extends Controller
 {
@@ -113,5 +116,16 @@ class PenjadwalanKonselingController extends Controller
         $penjadwalan->delete();
 
         return redirect()->route('penjadwalan.index')->with('success', 'Jadwal konseling berhasil dihapus.');
+    }
+
+    public function downloadAll()
+    {
+        $fileName = 'penjadwalan_konseling_' . now()->format('Ymd_His') . '.xlsx';
+        return Excel::download(new PenjadwalanKonselingExport(), $fileName);
+    }
+
+    public function show(PenjadwalanKonseling $penjadwalan)
+    {
+        return view('penjadwalan.show', compact('penjadwalan'));
     }
 }

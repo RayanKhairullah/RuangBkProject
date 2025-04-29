@@ -3,6 +3,7 @@
 
     @if (auth()->user()->role === App\Enums\UserRole::Teacher)
         <a href="{{ route('catatans.create') }}" class="btn btn-primary mb-4">{{ __('Buat Catatan') }}</a>
+        <a href="{{ route('catatans.download') }}" class="btn btn-primary mb-4">{{ __('Download Semua Catatan') }}</a>
     @endif
 
     <div class="overflow-x-auto">
@@ -11,7 +12,7 @@
                 <tr class="bg-black-100">
                     <th class="border border-gray-300 px-4 py-1">{{ __('Nama Siswa') }}</th>
                     <th class="border border-gray-300 px-4 py-1">{{ __('Jurusan Siswa') }}</th>
-                    <th class="border border-gray-300 px-4 py-1">{{ __('Tingkatan Rooms') }}</th>
+                    <th class="border border-gray-300 px-4 py-1">{{ __('Tingkatan Kelas') }}</th>
                     <th class="border border-gray-300 px-4 py-1">{{ __('Kasus') }}</th>
                     <th class="border border-gray-300 px-4 py-1">{{ __('Tanggal') }}</th>
                     <th class="border border-gray-300 px-4 py-1">{{ __('Nama Guru') }}</th>
@@ -47,6 +48,7 @@
                                         {{ __('Hapus') }}
                                     </button>
                                 </form>
+                                <a href="{{ route('catatans.show', $catatan->id) }}" class="btn btn-sm btn-warning">{{ __('Show') }}</a>
                             </td>
                         @endif
                     </tr>

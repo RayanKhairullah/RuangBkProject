@@ -18,7 +18,8 @@ class RoomController extends Controller
     public function create()
     {
         $jurusans = Jurusan::all();
-        return view('rooms.create', compact('jurusans'));
+        $rooms    = Room::all();
+        return view('rooms.create', compact('jurusans', 'rooms'));
     }
 
     public function store(Request $request)
@@ -38,7 +39,7 @@ class RoomController extends Controller
 
         return redirect()->route('rooms.index')->with('success', 'Room created successfully.');
     }
-
+    
     public function edit(Room $room)
     {
         $jurusans = Jurusan::all();

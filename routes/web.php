@@ -27,9 +27,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('biodatas/edit', [BiodataController::class, 'edit'])->name('biodatas.edit');
     Route::put('biodatas', [BiodataController::class, 'update'])->name('biodatas.update');
     Route::get('biodatas', [BiodataController::class, 'show'])->name('biodatas.show');
-    Route::resource('penjadwalan', PenjadwalanKonselingController::class);
+    Route::resource('penjadwalan', PenjadwalanKonselingController::class)->except(['show']);
     Route::post('penjadwalan/{penjadwalan}/send', [PenjadwalanKonselingController::class, 'send'])->name('penjadwalan.send');
-    Route::resource('catatans', CatatanController::class);
+    Route::resource('catatans', CatatanController::class)->except(['show']);
 });
 
 //Teachers Routes
@@ -42,6 +42,11 @@ Route::middleware(['auth', 'verified', 'teacher'])->group(function () {
     Route::resource('jurusans', JurusanController::class);
     Route::resource('rooms', RoomController::class);
     Route::get('rooms/{room}', [RoomController::class, 'show'])->name('rooms.show');
+    Route::get('users/{user}/download-biodata', [UserController::class, 'downloadBiodata'])->name('users.downloadBiodata');
+    Route::get('penjadwalan/download', [PenjadwalanKonselingController::class, 'downloadAll'])->name('penjadwalan.download');
+    Route::get('catatans/download', [CatatanController::class, 'downloadAll'])->name('catatans.download');
+    Route::get('penjadwalan/{penjadwalan}', [PenjadwalanKonselingController::class, 'show'])->name('penjadwalan.show');
+    Route::get('catatans/{catatan}', [CatatanController::class, 'show'])->name('catatans.show');
 });
 
 //Settings Routes

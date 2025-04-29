@@ -3,9 +3,9 @@
         <a href="{{ route('rooms.create') }}" class="btn btn-primary">{{ __('Create Room') }}</a>
     </div>
 
-    <h1 class="text-2xl font-bold">{{ __('Room: ') . $room->kode_rooms }}</h1>
+    <h1 class="text-2xl font-bold">{{ __('Kode Kelas: ') . $room->kode_rooms }}</h1>
     <p>{{ __('Jurusan: ') . $room->jurusan->nama_jurusan }}</p>
-    <p>{{ __('Tingkatan: ') . $room->tingkatan_rooms }}</p>
+    <p>{{ __('Tingkatan Kelas: ') . $room->tingkatan_rooms }}</p>
 
     <h2 class="text-xl font-bold mt-4">{{ __('Anggota Kelas') }}</h2>
     <table class="table-auto w-full mt-2">
@@ -23,7 +23,10 @@
                     <td>{{ $user->email }}</td>
                     <td>
                         @if ($user->biodata)
-                            <span class="text-green-500">{{ __('Completed') }}</span>
+                            
+                            <a href="{{ route('users.downloadBiodata', $user) }}" class="btn btn-sm btn-success">
+                                <span class="text-green-500">{{ __('Completed') }}</span>
+                            </a>
                         @else
                             <span class="text-red-500">{{ __('Not Completed') }}</span>
                         @endif

@@ -7,9 +7,9 @@
         <thead>
             <tr>
                 <th>{{ __('ID') }}</th>
+                <th>{{ __('Kode Kelas') }}</th>
                 <th>{{ __('Jurusan') }}</th>
-                <th>{{ __('Kode Room') }}</th>
-                <th>{{ __('Tingkatan Room') }}</th>
+                <th>{{ __('Tingkatan Kelas') }}</th>
                 <th>{{ __('Actions') }}</th>
             </tr>
         </thead>
@@ -17,8 +17,8 @@
             @foreach ($rooms as $room)
                 <tr>
                     <td>{{ $room->id }}</td>
-                    <td>{{ $room->jurusan->nama_jurusan }}</td>
                     <td>{{ $room->kode_rooms }}</td>
+                    <td>{{ $room->jurusan->nama_jurusan }}</td>
                     <td>{{ $room->tingkatan_rooms }}</td>
                     <td>
                         <a href="{{ route('rooms.edit', $room) }}" class="btn btn-sm btn-warning">{{ __('Edit') }}</a>

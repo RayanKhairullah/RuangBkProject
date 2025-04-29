@@ -3,6 +3,10 @@
 
     <a href="{{ route('penjadwalan.create') }}" class="btn btn-primary mb-4">{{ __('Buat Jadwal') }}</a>
 
+    @if (auth()->user()->role === App\Enums\UserRole::Teacher)
+        <a href="{{ route('penjadwalan.download') }}" class="btn btn-primary mb-4">{{ __('Download Semua Jadwal') }}</a>
+    @endif
+
     <div class="overflow-x-auto">
         <table class="table-auto w-full border-collapse border border-gray-300">
             <thead>
@@ -42,6 +46,9 @@
                                 @csrf
                                 <button type="submit" class="btn btn-sm btn-primary">{{ __('Send') }}</button>
                             </form>
+                            @if (auth()->user()->role === App\Enums\UserRole::Teacher)
+                                <a href="{{ route('penjadwalan.show', $jadwal->id) }}" class="btn btn-sm btn-warning">{{ __('Show') }}</a>
+                            @endif
                         </td>
                     </tr>
                 @endforeach

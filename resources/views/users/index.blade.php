@@ -19,7 +19,10 @@
                     <td>{{ $user->email }}</td>
                     <td>
                         @if ($user->biodata)
-                            <span class="text-green-500">{{ __('Completed') }}</span>
+                            
+                            <a href="{{ route('users.downloadBiodata', $user) }}" class="btn btn-sm btn-success">
+                                <span class="text-green-500">{{ __('Completed') }}</span>
+                            </a>
                         @else
                             <span class="text-red-500">{{ __('Not Completed') }}</span>
                         @endif

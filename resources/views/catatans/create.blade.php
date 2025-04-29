@@ -20,9 +20,9 @@
 
         <!-- Pilih Room -->
         <div class="mb-4">
-            <label for="room_id" class="block text-sm font-medium text-gray-700">{{ __('Pilih Room') }}</label>
+            <label for="room_id" class="block text-sm font-medium text-gray-700">{{ __('Pilih Kelas') }}</label>
             <select name="room_id" id="room_id" class="form-input w-full" required>
-                <option value="">{{ __('Pilih Room') }}</option>
+                <option value="">{{ __('Pilih Kelas') }}</option>
                 @foreach ($rooms as $room)
                     <option value="{{ $room->id }}">
                         {{ $room->jurusan->nama_jurusan }} - {{ $room->tingkatan_rooms }}

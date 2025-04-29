@@ -8,6 +8,9 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Enums\UserRole;
+use Illuminate\Support\Facades\Storage;
+use App\Exports\CatatanExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CatatanController extends Controller
 {
@@ -103,5 +106,14 @@ class CatatanController extends Controller
         $catatan->delete();
 
         return redirect()->route('catatans.index')->with('success', 'Catatan berhasil dihapus.');
+    }
+    public function downloadAll()
+    {
+        $fileName = 'catatan_prilaku_' . now()->format('Ymd_His') . '.xlsx';
+        return Excel::download(new CatatanExport(), $fileName);
+    }
+    public function show(Catatan $catatan)
+    {
+        return view('catatans.show', compact('catatan'));
     }
 }
