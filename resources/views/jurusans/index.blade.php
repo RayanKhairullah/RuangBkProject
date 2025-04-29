@@ -3,29 +3,31 @@
         <a href="{{ route('jurusans.create') }}" class="btn btn-primary">{{ __('Create Jurusan') }}</a>
     </div>
 
-    <table class="table-auto w-full">
-        <thead>
-            <tr>
-                <th>{{ __('ID') }}</th>
-                <th>{{ __('Nama Jurusan') }}</th>
-                <th>{{ __('Actions') }}</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($jurusans as $jurusan)
-                <tr>
-                    <td>{{ $jurusan->id }}</td>
-                    <td>{{ $jurusan->nama_jurusan }}</td>
-                    <td>
-                        <a href="{{ route('jurusans.edit', $jurusan) }}" class="btn btn-sm btn-warning">{{ __('Edit') }}</a>
-                        <form action="{{ route('jurusans.destroy', $jurusan) }}" method="POST" class="inline-block">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('{{ __('Are you sure?') }}')">{{ __('Delete') }}</button>
-                        </form>
-                    </td>
+    <div class="overflow-x-auto">
+        <table class="table-auto w-full border-collapse border border-gray-300">
+            <thead>
+                <tr class="bg-black-100">
+                    <th class="border border-gray-300 px-4 py-1">{{ __('ID') }}</th>
+                    <th class="border border-gray-300 px-4 py-1">{{ __('Nama Jurusan') }}</th>
+                    <th class="border border-gray-300 px-4 py-1">{{ __('Actions') }}</th>
                 </tr>
-            @endforeach
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach ($jurusans as $jurusan)
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">{{ $jurusan->id }}</td>
+                        <td class="border border-gray-300 px-4 py-2">{{ $jurusan->nama_jurusan }}</td>
+                        <td class="border border-gray-300 px-4 py-2">
+                            <a href="{{ route('jurusans.edit', $jurusan) }}" class="btn btn-sm btn-warning">{{ __('Edit') }}</a>
+                            <form action="{{ route('jurusans.destroy', $jurusan) }}" method="POST" class="inline-block">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('{{ __('Are you sure?') }}')">{{ __('Delete') }}</button>
+                            </form>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
 </x-layouts.app>

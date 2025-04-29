@@ -10,6 +10,7 @@ use App\Http\Controllers\RoomController;
 use App\Http\Controllers\BiodataController;
 use App\Http\Controllers\PenjadwalanKonselingController;
 use App\Http\Controllers\CatatanController;
+use App\Http\Controllers\SuratPanggilanController;
 
 //Users Routes
 Route::get('/', function () {
@@ -47,6 +48,9 @@ Route::middleware(['auth', 'verified', 'teacher'])->group(function () {
     Route::get('catatans/download', [CatatanController::class, 'downloadAll'])->name('catatans.download');
     Route::get('penjadwalan/{penjadwalan}', [PenjadwalanKonselingController::class, 'show'])->name('penjadwalan.show');
     Route::get('catatans/{catatan}', [CatatanController::class, 'show'])->name('catatans.show');
+    Route::resource('surat-panggilan', SuratPanggilanController::class);
+    Route::get('surat-panggilan/{id}/download', [SuratPanggilanController::class, 'generate'])
+            ->name('surat-panggilan.download');
 });
 
 //Settings Routes

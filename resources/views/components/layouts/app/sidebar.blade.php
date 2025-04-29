@@ -16,12 +16,32 @@
                     <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard') || request()->routeIs('teacher.dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
                     
                     @if (auth()->user()->role === App\Enums\UserRole::Teacher)
-                        <flux:navlist.item icon="users" :href="route('users.index')" wire:navigate>{{ __('Users') }}</flux:navlist.item>
-                        <flux:navlist.item icon="list-bullet" :href="route('rooms.index')" wire:navigate>{{ __('Rooms') }}</flux:navlist.item>
-                        <flux:navlist.item icon="list-bullet" :href="route('jurusans.index')" wire:navigate>{{ __('Jurusan') }}</flux:navlist.item>
-                        <flux:navlist.item icon="list-bullet" :href="route('penjadwalan.index')" wire:navigate>{{ __('Konseling') }}</flux:navlist.item>
-                        <flux:navlist.item icon="list-bullet" :href="route('catatans.index')" wire:navigate>{{ __('Catatan Prilaku') }}</flux:navlist.item>
-                        <flux:navlist.item icon="list-bullet" :href="route('dashboard')" wire:navigate>{{ __('Laporan') }}</flux:navlist.item>
+                            <flux:navlist.item icon="users" :href="route('users.index')" wire:navigate>{{ __('Users') }}</flux:navlist.item>
+                            <flux:navlist.item icon="list-bullet" :href="route('rooms.index')" wire:navigate>{{ __('Rooms') }}</flux:navlist.item>
+                            <flux:navlist.item icon="list-bullet" :href="route('jurusans.index')" wire:navigate>{{ __('Jurusan') }}</flux:navlist.item>
+
+                        <flux:navlist.group :heading="__('Main Feature')" class="grid">
+                            <flux:navlist.item icon="list-bullet" :href="route('penjadwalan.index')" wire:navigate>{{ __('Konseling') }}</flux:navlist.item>
+                            <flux:navlist.item icon="list-bullet" :href="route('catatans.index')" wire:navigate>{{ __('Catatan Prilaku') }}</flux:navlist.item>
+                            <flux:dropdown position="bottom" align="start">
+                                <button class="w-full flex items-center justify-between px-4 py-2">
+                                    <span class="flex items-center space-x-2">
+                                        <flux:icon name="list-bullet" class="w-5 h-5" />
+                                        <span>{{ __('Laporan') }}</span>
+                                    </span>
+                                    <flux:icon name="chevron-down" class="w-4 h-4" />
+                                </button>
+                            
+                                <flux:menu class="w-56">
+                                    <flux:menu.item :href="route('surat-panggilan.index')" icon="document-text" wire:navigate>
+                                        {{ __('Surat Panggilan') }}
+                                    </flux:menu.item>
+                                    <flux:menu.item :href="route('surat-panggilan.index')" icon="book-open-text" wire:navigate>
+                                        {{ __('Surat X') }}
+                                    </flux:menu.item>
+                                </flux:menu>
+                            </flux:dropdown>
+                        </flux:navlist.group>
                     @endif
 
                     @if (auth()->user()->role === App\Enums\UserRole::User)
