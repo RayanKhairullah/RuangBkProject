@@ -9,7 +9,7 @@
                 <div class="absolute inset-0 bg-neutral-900"></div>
                 <a href="{{ route('home') }}" class="relative z-20 flex items-center text-lg font-medium" wire:navigate>
                     <span class="flex h-10 w-10 items-center justify-center rounded-md">
-                        <x-app-logo-icon class="mr-2 h-7 fill-current text-white" />
+                        <img src="{{ asset('images/logoKonselor.png') }}" alt="RuangBk" class="mr-2 h-7 fill-current text-white">
                     </span>
                     {{ config('app.name', 'Laravel') }}
                 </a>
@@ -17,6 +17,19 @@
                 @php
                     [$message, $author] = str(Illuminate\Foundation\Inspiring::quotes()->random())->explode('-');
                 @endphp
+
+                <div class="relative z-20 mt-8">
+                    <img src="{{ asset('images/login.jpg') }}" alt="RuangBk" class="rounded-lg shadow-lg">
+                </div>
+                {{-- <div class="relative z-20 mt-8">
+                    @if (Route::is('login'))
+                        <img src="{{ asset('images/login.jpg') }}" alt="Login Graphic" class="rounded-lg shadow-lg">
+                    @elseif (Route::is('register'))
+                        <img src="{{ asset('images/register.jpg') }}" alt="Register Graphic" class="rounded-lg shadow-lg">
+                    @elseif (Route::is('forgot-password'))
+                        <img src="{{ asset('images/forgot-password.jpg') }}" alt="Register Graphic" class="rounded-lg shadow-lg">
+                    @endif
+                </div> --}}
 
                 <div class="relative z-20 mt-auto">
                     <blockquote class="space-y-2">

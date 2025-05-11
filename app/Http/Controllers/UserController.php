@@ -37,6 +37,17 @@ class UserController extends Controller
         return redirect()->route('users.index')->with('success', 'User created successfully.');
     }
 
+    public function showBiodata(User $user)
+    {
+        $biodata = $user->biodata;
+
+        if (!$biodata) {
+            return redirect()->route('users.index')->with('error', 'Biodata tidak ditemukan.');
+        }
+
+        return view('users.biodata', compact('biodata', 'user'));
+    }
+
     public function edit(User $user)
     {
         return view('users.edit', compact('user'));

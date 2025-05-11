@@ -51,6 +51,7 @@ Route::middleware(['auth', 'verified', 'teacher'])->group(function () {
     Route::resource('surat-panggilan', SuratPanggilanController::class);
     Route::get('surat-panggilan/{id}/download', [SuratPanggilanController::class, 'generate'])
             ->name('surat-panggilan.download');
+    Route::get('users/{user}/biodata', [UserController::class, 'showBiodata'])->name('users.biodata');
 });
 
 //Settings Routes

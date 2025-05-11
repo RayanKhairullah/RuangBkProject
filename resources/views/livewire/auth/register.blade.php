@@ -27,18 +27,13 @@
         />
 
         <!-- Kode Rooms -->
-        <flux:select
+        <flux:input
             wire:model="kode_rooms"
-            :label="__('Kode Rooms')"
+            :label="__('Kode Kelas')"
+            type="text"
             required
-            >
-            <option value="">{{ __('Select a room') }}</option>
-            @foreach ($rooms as $room)
-                <option value="{{ $room['kode_rooms'] }}">
-                    {{ $room['kode_rooms'] }} - {{ $room['jurusan']['nama_jurusan'] ?? '' }}
-                </option>
-            @endforeach
-        </flux:select>
+            :placeholder="__('Enter class code')"
+        />
         @error('kode_rooms')
             <span class="text-red-500 text-sm">{{ $message }}</span>
         @enderror

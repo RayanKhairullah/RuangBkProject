@@ -29,6 +29,11 @@
                         @endif
                     </td>
                     <td class="border border-gray-300 px-4 py-2">
+                        @if ($user->biodata)
+                            <a href="{{ route('users.biodata', $user) }}" class="btn btn-sm btn-info">{{ __('View Biodata') }}</a>
+                        @else
+                            <span class="text-red-500">{{ __('Biodata not available') }}</span>
+                        @endif
                         <a href="{{ route('users.edit', $user) }}" class="btn btn-sm btn-warning">{{ __('Edit') }}</a>
                         <form action="{{ route('users.destroy', $user) }}" method="POST" class="inline-block">
                             @csrf
