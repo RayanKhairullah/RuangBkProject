@@ -25,19 +25,24 @@ class PenjadwalanKonselingController extends Controller
 
     public function create()
     {
-        // Asumsikan Anda menggunakan enum (App\Enums\UserRole)
-        if (Auth::user()->role === UserRole::Teacher) {
-            // Guru membuat jadwal, tampilkan dropdown dengan data siswa saja
-            $users = User::where('role', UserRole::User)->get();
-        } else {
-            // User membuat jadwal, tampilkan dropdown dengan data guru saja
-            $users = User::where('role', UserRole::Teacher)->get();
+        // Batasi akses hanya untuk pengguna dengan role User
+        if (Auth::user()->role !== UserRole::User) {
+            abort(403, 'Unauthorized action.');
         }
+
+        // Tampilkan dropdown dengan data guru saja
+        $users = User::where('role', UserRole::Teacher)->get();
+
         return view('penjadwalan.create', compact('users'));
     }
 
     public function store(Request $request)
     {
+        // Batasi akses hanya untuk pengguna dengan role User
+        if (Auth::user()->role !== UserRole::User) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $request->validate([
             'penerima_id' => 'required|exists:users,id',
             'lokasi' => 'required|string|max:255',
@@ -47,7 +52,9 @@ class PenjadwalanKonselingController extends Controller
 
         PenjadwalanKonseling::create([
             'pengirim_id' => Auth::id(),
+            'nama_pengirim' => Auth::user()->name,
             'penerima_id' => $request->penerima_id,
+            'nama_penerima' => User::find($request->penerima_id)->name,
             'lokasi' => $request->lokasi,
             'tanggal' => $request->tanggal,
             'topik_dibahas' => $request->topik_dibahas,
@@ -55,7 +62,6 @@ class PenjadwalanKonselingController extends Controller
 
         return redirect()->route('penjadwalan.index')->with('success', 'Jadwal konseling berhasil dibuat.');
     }
-
     public function edit(PenjadwalanKonseling $penjadwalan)
     {
         if (Auth::id() !== $penjadwalan->pengirim_id && Auth::id() !== $penjadwalan->penerima_id) {
@@ -77,6 +83,8 @@ class PenjadwalanKonselingController extends Controller
             'lokasi' => 'required|string|max:255',
             'tanggal' => 'required|date',
             'topik_dibahas' => 'required|string',
+            'nama_pengirim' => 'nullable|string|max:255',
+            'nama_penerima' => 'nullable|string|max:255',
         ]);
 
         // Hanya guru yang bisa mengupdate solusi dan status

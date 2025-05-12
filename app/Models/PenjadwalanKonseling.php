@@ -10,7 +10,9 @@ class PenjadwalanKonseling extends Model
 
     protected $fillable = [
         'pengirim_id',
+        'nama_pengirim',
         'penerima_id',
+        'nama_penerima',
         'lokasi',
         'tanggal',
         'topik_dibahas',

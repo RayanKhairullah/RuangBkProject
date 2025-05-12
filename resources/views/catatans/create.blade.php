@@ -3,19 +3,28 @@
 
     <form action="{{ route('catatans.store') }}" method="POST" class="mt-4">
         @csrf
-        <!-- Pilih Penerima -->
+
+        <!-- Pilih Siswa -->
         <div class="mb-4">
-            <label for="user_id" class="block text-sm font-medium text-gray-700">
-                {{ __('Pilih Penerima') }}
-            </label>
-            <select name="user_id" id="user_id" class="form-input w-full select2" required>
-                <option value="">{{ __('Pilih Penerima') }}</option>
+            <label for="user_id" class="block text-sm font-medium text-gray-700">{{ __('Pilih Siswa') }}</label>
+            <select name="user_id" id="user_id" class="form-input w-full">
+                <option value="">{{ __('Pilih Siswa') }}</option>
                 @foreach ($users as $user)
-                    <option value="{{ $user->id }}">
-                        {{ $user->name }} ({{ $user->email }})
-                    </option>
+                    <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
                 @endforeach
             </select>
+        </div>
+
+        <!-- Nama Siswa -->
+        <div class="mb-4">
+            <label for="nama_siswa" class="block text-sm font-medium text-gray-700">{{ __('Nama Siswa') }}</label>
+            <input type="text" name="nama_siswa" id="nama_siswa" class="form-input w-full" required>
+        </div>
+
+        <!-- Guru Pembimbing -->
+        <div class="mb-4">
+            <label for="guru_pembimbing" class="block text-sm font-medium text-gray-700">{{ __('Guru Pembimbing') }}</label>
+            <input type="text" name="guru_pembimbing" id="guru_pembimbing" class="form-input w-full" required>
         </div>
 
         <!-- Pilih Room -->
@@ -24,9 +33,7 @@
             <select name="room_id" id="room_id" class="form-input w-full" required>
                 <option value="">{{ __('Pilih Kelas') }}</option>
                 @foreach ($rooms as $room)
-                    <option value="{{ $room->id }}">
-                        {{ $room->jurusan->nama_jurusan }} - {{ $room->tingkatan_rooms }}
-                    </option>
+                    <option value="{{ $room->id }}">{{ $room->jurusan->nama_jurusan }} - {{ $room->tingkatan_rooms }}</option>
                 @endforeach
             </select>
         </div>

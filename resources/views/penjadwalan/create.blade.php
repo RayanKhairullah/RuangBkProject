@@ -3,19 +3,34 @@
 
     <form action="{{ route('penjadwalan.store') }}" method="POST" class="mt-4">
         @csrf
+
+        <!-- Account Pengirim -->
+        <div class="mb-4">
+            <label for="account_pengirim" class="block text-sm font-medium text-gray-700">{{ __('Account Pengirim') }}</label>
+            <input type="text" name="account_pengirim" id="account_pengirim" class="form-input w-full" value="{{ auth()->user()->email }}" readonly>
+        </div>
+
+        <!-- Nama Pengirim -->
+        <div class="mb-4">
+            <label for="nama_pengirim" class="block text-sm font-medium text-gray-700">{{ __('Nama Pengirim') }}</label>
+            <input type="text" name="nama_pengirim" id="nama_pengirim" class="form-input w-full" placeholder="Opsional">
+        </div>
+
         <!-- Pilih Penerima -->
         <div class="mb-4">
-            <label for="penerima_id" class="block text-sm font-medium text-gray-700">
-                {{ __('Pilih Penerima') }}
-            </label>
+            <label for="penerima_id" class="block text-sm font-medium text-gray-700">{{ __('Pilih Penerima') }}</label>
             <select name="penerima_id" id="penerima_id" class="form-input w-full select2" required>
                 <option value="">{{ __('Pilih Penerima') }}</option>
                 @foreach ($users as $user)
-                    <option value="{{ $user->id }}">
-                        {{ $user->name }} ({{ $user->email }})
-                    </option>
+                    <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
                 @endforeach
             </select>
+        </div>
+
+        <!-- Nama Penerima -->
+        <div class="mb-4">
+            <label for="nama_penerima" class="block text-sm font-medium text-gray-700">{{ __('Nama Penerima') }}</label>
+            <input type="text" name="nama_penerima" id="nama_penerima" class="form-input w-full" placeholder="Opsional">
         </div>
 
         <!-- Lokasi -->

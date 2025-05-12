@@ -8,10 +8,10 @@ return new class extends Migration {
     {
         Schema::create('penjadwalan_konselings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pengirim_id')->constrained('users')->onDelete('cascade') ->nullable();
-            $table->string('nama_pengirim');
-            $table->foreignId('penerima_id')->constrained('users')->onDelete('cascade') ->nullable();
-            $table->string('nama_penerima');
+            $table->foreignId('pengirim_id')->constrained('users')->onDelete('cascade');
+            $table->string('nama_pengirim') ->nullable();
+            $table->foreignId('penerima_id')->constrained('users')->onDelete('cascade');
+            $table->string('nama_penerima') ->nullable();
             $table->string('lokasi');
             $table->dateTime('tanggal');
             $table->text('topik_dibahas');

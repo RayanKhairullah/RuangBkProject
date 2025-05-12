@@ -10,6 +10,13 @@
             <input type="email" name="email" id="email" class="form-input" required>
         </div>
         <div class="mb-4">
+            <label for="role" class="block text-sm font-medium text-gray-700">{{ __('Role') }}</label>
+            <select name="role" id="role" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                <option value="user">{{ __('User') }}</option>
+                <option value="teacher">{{ __('Teacher') }}</option>
+            </select>
+        </div>
+        <div class="mb-4">
             <label for="password">{{ __('Password') }}</label>
             <input type="password" name="password" id="password" class="form-input" required>
         </div>

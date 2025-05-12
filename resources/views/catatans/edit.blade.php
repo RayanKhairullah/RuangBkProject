@@ -8,7 +8,7 @@
         <!-- Pilih Siswa -->
         <div class="mb-4">
             <label for="user_id" class="block text-sm font-medium text-gray-700">{{ __('Pilih Siswa') }}</label>
-            <select name="user_id" id="user_id" class="form-input w-full" required>
+            <select name="user_id" id="user_id" class="form-input w-full">
                 @foreach ($users as $user)
                     <option value="{{ $user->id }}" @if($catatan->user_id == $user->id) selected @endif>
                         {{ $user->name }} ({{ $user->email }})
@@ -17,13 +17,24 @@
             </select>
         </div>
 
+        <!-- Nama Siswa -->
+        <div class="mb-4">
+            <label for="nama_siswa" class="block text-sm font-medium text-gray-700">{{ __('Nama Siswa') }}</label>
+            <input type="text" name="nama_siswa" id="nama_siswa" value="{{ $catatan->nama_siswa }}" class="form-input w-full" required>
+        </div>
+
+        <!-- Guru Pembimbing -->
+        <div class="mb-4">
+            <label for="guru_pembimbing" class="block text-sm font-medium text-gray-700">{{ __('Guru Pembimbing') }}</label>
+            <input type="text" name="guru_pembimbing" id="guru_pembimbing" value="{{ $catatan->guru_pembimbing }}" class="form-input w-full" required>
+        </div>
+
         <!-- Pilih Room -->
         <div class="mb-4">
             <label for="room_id" class="block text-sm font-medium text-gray-700">{{ __('Pilih Kelas') }}</label>
             <select name="room_id" id="room_id" class="form-input w-full" required>
-                <option value="">{{ __('Pilih Kelas') }}</option>
                 @foreach ($rooms as $room)
-                    <option value="{{ $room->id }}">
+                    <option value="{{ $room->id }}" @if($catatan->room_id == $room->id) selected @endif>
                         {{ $room->jurusan->nama_jurusan }} - {{ $room->tingkatan_rooms }}
                     </option>
                 @endforeach

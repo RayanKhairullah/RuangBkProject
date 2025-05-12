@@ -11,6 +11,7 @@ use App\Http\Controllers\BiodataController;
 use App\Http\Controllers\PenjadwalanKonselingController;
 use App\Http\Controllers\CatatanController;
 use App\Http\Controllers\SuratPanggilanController;
+use App\Livewire\RoomTable;
 
 //Users Routes
 Route::get('/', function () {
@@ -45,13 +46,23 @@ Route::middleware(['auth', 'verified', 'teacher'])->group(function () {
     Route::get('rooms/{room}', [RoomController::class, 'show'])->name('rooms.show');
     Route::get('users/{user}/download-biodata', [UserController::class, 'downloadBiodata'])->name('users.downloadBiodata');
     Route::get('penjadwalan/download', [PenjadwalanKonselingController::class, 'downloadAll'])->name('penjadwalan.download');
-    Route::get('catatans/download', [CatatanController::class, 'downloadAll'])->name('catatans.download');
+    // Form untuk memilih siswa
+    Route::get('catatans/download-by-user', [CatatanController::class, 'showDownloadByUser'])
+         ->name('catatans.downloadForm');
+    // Proses download sesuai user_id terpilih
+    Route::post('catatans/download-by-user', [CatatanController::class, 'downloadByUser'])
+         ->name('catatans.downloadByUser');
+    Route::get('catatans/download-all', [CatatanController::class, 'downloadAll'])
+        ->name('catatans.downloadAll');
+    Route::resource('catatans', CatatanController::class)->except(['show']);
     Route::get('penjadwalan/{penjadwalan}', [PenjadwalanKonselingController::class, 'show'])->name('penjadwalan.show');
     Route::get('catatans/{catatan}', [CatatanController::class, 'show'])->name('catatans.show');
     Route::resource('surat-panggilan', SuratPanggilanController::class);
     Route::get('surat-panggilan/{id}/download', [SuratPanggilanController::class, 'generate'])
             ->name('surat-panggilan.download');
     Route::get('users/{user}/biodata', [UserController::class, 'showBiodata'])->name('users.biodata');
+    Route::get('rooms-livewire', RoomTable::class)->name('rooms.livewire');
+    Route::get('jurusans/{jurusan}', [JurusanController::class, 'show'])->name('jurusans.show');
 });
 
 //Settings Routes

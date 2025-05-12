@@ -3,5 +3,5 @@
         <a href="{{ route('rooms.create') }}" class="btn btn-primary">{{ __('Create Room') }}</a>
     </div>
 
-    @livewire('room-filter')
+    <livewire:room-table />
 </x-layouts.app>

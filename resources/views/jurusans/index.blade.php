@@ -18,6 +18,7 @@
                         <td class="border border-gray-300 px-4 py-2">{{ $jurusan->id }}</td>
                         <td class="border border-gray-300 px-4 py-2">{{ $jurusan->nama_jurusan }}</td>
                         <td class="border border-gray-300 px-4 py-2">
+                            <a href="{{ route('jurusans.show', $jurusan) }}" class="btn btn-sm btn-primary">{{ __('View') }}</a>
                             <a href="{{ route('jurusans.edit', $jurusan) }}" class="btn btn-sm btn-warning">{{ __('Edit') }}</a>
                             <form action="{{ route('jurusans.destroy', $jurusan) }}" method="POST" class="inline-block">
                                 @csrf
