@@ -45,6 +45,12 @@ class JurusanController extends Controller
         return redirect()->route('jurusans.index')->with('success', 'Jurusan updated successfully.');
     }
 
+    public function show(Jurusan $jurusan)
+    {
+        $rooms = $jurusan->rooms; // Ambil semua room yang terkait dengan jurusan
+        return view('jurusans.show', compact('jurusan', 'rooms'));
+    }
+
     public function destroy(Jurusan $jurusan)
     {
         $jurusan->delete();

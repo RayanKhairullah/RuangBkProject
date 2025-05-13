@@ -1,38 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Edit Biodata</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-</head>
-<body class="relative min-h-screen bg-white font-sans">
-
-  <!-- Corner Backgrounds -->
-  <div class="absolute top-0 left-0 w-24 h-24 bg-yellow-400 rounded-br-2xl z-0"></div>
-  <div class="absolute top-0 right-0 w-24 h-24 bg-indigo-400 rounded-bl-2xl z-0"></div>
-  <div class="absolute bottom-0 left-0 w-24 h-24 bg-indigo-400 rounded-tr-2xl z-0"></div>
-  <div class="absolute bottom-0 right-0 w-24 h-24 bg-yellow-400 rounded-tl-2xl z-0"></div>
-
-  <!-- Tombol Kembali -->
-  <div class="absolute top-4 left-4 z-20">
-    <a href="{{ route('biodatas.show') }}" class="bg-indigo-400 text-white px-4 py-2 rounded-lg shadow font-semibold inline-block">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
-            <path fill-rule="evenodd" d="M12.5 9.75A2.75 2.75 0 0 0 9.75 7H4.56l2.22 2.22a.75.75 0 1 1-1.06 1.06l-3.5-3.5a.75.75 0 0 1 0-1.06l3.5-3.5a.75.75 0 0 1 1.06 1.06L4.56 5.5h5.19a4.25 4.25 0 0 1 0 8.5h-1a.75.75 0 0 1 0-1.5h1a2.75 2.75 0 0 0 2.75-2.75Z" clip-rule="evenodd" />
-          </svg>          
-    </a>
-  </div>
-
-
-
-  <!-- Konten Utama -->
-  <main class="min-h-screen flex items-center justify-center px-4 md:px-12 bg-white">
-    <div class="bg-white rounded-xl shadow-xl max-w-6xl w-full p-8 md:p-4 z-10">
-      <h1 class="text-center text-2xl md:text-3xl font-light mb-8">Biodata Lengkap</h1>
-
-      <form action="{{ route('biodatas.update') }}" method="POST" enctype="multipart/form-data" >
+<x-layouts.app :title="__('Edit Biodata')">
+    <form action="{{ route('biodatas.update') }}" method="POST">
         @csrf
         @method('PUT')
     
@@ -146,28 +113,4 @@
 <button id="simpanBtn" type="button" class="mt-4 text-sm text-gray-700 hover:underline self-end">Simpan</button>
 
     </form>
-    </div>
-  </main>
-
-  <script>
-    document.getElementById('simpanBtn').addEventListener('click', function () {
-      Swal.fire({
-        title: 'Konfirmasi',
-        text: 'Apakah Anda yakin ingin menyimpan perubahan biodata ini?',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Ya, simpan!',
-        cancelButtonText: 'Batal',
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          // Submit form jika dikonfirmasi
-          this.closest('form').submit();
-        }
-      });
-    });
-  </script>
-  
-</body>
-</html>
+</x-layouts.app>

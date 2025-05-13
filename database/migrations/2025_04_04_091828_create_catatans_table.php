@@ -10,9 +10,11 @@ return new class extends Migration
     {
         Schema::create('catatans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Relasi ke tabel users (siswa)
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade')->nullable()->default('siswa smea'); // Relasi ke tabel users (siswa)
+            $table->string('nama_siswa');
             $table->foreignId('room_id')->constrained('rooms')->onDelete('cascade'); // Relasi ke tabel rooms
             $table->foreignId('guru_id')->constrained('users')->onDelete('cascade'); // Relasi ke tabel users (guru)
+            $table->string('guru_pembimbing');
             $table->string('kasus');
             $table->date('tanggal');
             $table->text('catatan_guru');

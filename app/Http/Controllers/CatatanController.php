@@ -6,10 +6,10 @@ use App\Models\Catatan;
 use App\Models\Room;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\CatatanExport;
 use Illuminate\Support\Facades\Auth;
 use App\Enums\UserRole;
-use App\Exports\CatatanExport;
-use Maatwebsite\Excel\Facades\Excel;
 
 class CatatanController extends Controller
 {
@@ -17,13 +17,15 @@ class CatatanController extends Controller
     {
         if (Auth::user()->role === UserRole::Teacher) {
             $catatans = Catatan::with(['user', 'room', 'guru'])->get();
+            $students = User::where('role', UserRole::User)->get(); // Ambil semua siswa
         } else {
             $catatans = Catatan::with(['user', 'room', 'guru'])
                 ->where('user_id', Auth::id())
                 ->get();
+            $students = []; // Kosongkan untuk role User
         }
             
-        return view('catatans.index', compact('catatans'));
+        return view('catatans.index', compact('catatans', 'students'));
     }
 
     public function create()
@@ -44,8 +46,10 @@ class CatatanController extends Controller
         }
 
         $request->validate([
-            'user_id' => 'required|exists:users,id',
+            'user_id' => 'required|exists:users,id',  // Opsional
             'room_id' => 'required|exists:rooms,id',
+            'nama_siswa' => 'required|string|max:255', // Input manual// Otomatis diisi dengan akun login
+            'guru_pembimbing' => 'required|string|max:255', // Input manual
             'kasus' => 'required|string|max:255',
             'tanggal' => 'required|date',
             'catatan_guru' => 'required|string',
@@ -53,9 +57,11 @@ class CatatanController extends Controller
         ]);
 
         Catatan::create([
-            'user_id' => $request->user_id,
+            'user_id' => $request->user_id, // Opsional
             'room_id' => $request->room_id,
-            'guru_id' => Auth::id(),
+            'guru_id' => Auth::id(), // Otomatis diisi dengan akun login
+            'nama_siswa' => $request->nama_siswa,
+            'guru_pembimbing' => $request->guru_pembimbing,
             'kasus' => $request->kasus,
             'tanggal' => $request->tanggal,
             'catatan_guru' => $request->catatan_guru,
@@ -83,8 +89,11 @@ class CatatanController extends Controller
         }
 
         $request->validate([
-            'user_id' => 'required|exists:users,id',
+            'user_id' => 'nullable|exists:users,id', // Opsional
             'room_id' => 'required|exists:rooms,id',
+            'guru_id' => 'required|exists:users,id', // Otomatis diisi dengan akun login            
+            'nama_siswa' => 'required|string|max:255', // Input manual
+            'guru_pembimbing' => 'required|string|max:255', // Input manual
             'kasus' => 'required|string|max:255',
             'tanggal' => 'required|date',
             'catatan_guru' => 'required|string',
@@ -106,11 +115,40 @@ class CatatanController extends Controller
 
         return redirect()->route('catatans.index')->with('success', 'Catatan berhasil dihapus.');
     }
+    public function showDownloadByUser()
+    {
+        // Ambil semua siswa (role User)
+        $students = User::where('role', UserRole::User)->get();
+
+        return view('catatans.download-by-user', compact('students'));
+    }
     public function downloadAll()
     {
-        $fileName = 'catatan_prilaku_' . now()->format('Ymd_His') . '.xlsx';
-        return Excel::download(new CatatanExport(), $fileName);
+        abort_unless(Auth::user()->role === UserRole::Teacher, 403);
+        $fileName = 'catatan_semua_' . now()->format('Ymd_His') . '.xlsx';
+        return Excel::download(
+            new CatatanExport(null),
+            $fileName
+        );
     }
+
+    public function downloadByUser(Request $request)
+    {
+        $request->validate([
+            'nama_siswa' => 'required|exists:users,id', // Validasi menggunakan user_id
+        ]);
+
+        $userId = $request->nama_siswa; // Ambil user_id dari request
+        $user = User::findOrFail($userId); // Ambil data user berdasarkan ID
+        $userName = str_replace(' ', '_', strtolower($user->name)); // Format nama siswa (contoh: "User One" menjadi "user_one")
+        $fileName = "catatan_siswa_{$userName}_" . now()->format('Ymd_His') . '.xlsx';
+
+        return Excel::download(
+            new CatatanExport($userId),
+            $fileName
+        );
+    }
+
     public function show(Catatan $catatan)
     {
         return view('catatans.show', compact('catatan'));

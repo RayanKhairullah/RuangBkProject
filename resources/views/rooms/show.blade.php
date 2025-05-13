@@ -14,6 +14,7 @@
                 <th>{{ __('Name') }}</th>
                 <th>{{ __('Email') }}</th>
                 <th>{{ __('Biodata') }}</th>
+                <th>{{ __('Actions') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -30,6 +31,18 @@
                         @else
                             <span class="text-red-500">{{ __('Not Completed') }}</span>
                         @endif
+                                                @if ($user->biodata)
+                            <a href="{{ route('users.biodata', $user) }}" class="btn btn-sm btn-info">{{ __('View Biodata') }}</a>
+                        @else
+                            <span class="text-red-500">{{ __('Biodata not available') }}</span>
+                        @endif
+                    </td>
+                    <td>
+                        <form action="{{ route('users.destroy', $user) }}" method="POST" class="inline-block">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('{{ __('Are you sure?') }}')">{{ __('Delete') }}</button>
+                        </form>
                     </td>
                 </tr>
             @endforeach

@@ -22,6 +22,18 @@
             <label for="topik_dibahas" class="block text-sm font-medium text-gray-700">{{ __('Topik Dibahas') }}</label>
             <textarea name="topik_dibahas" id="topik_dibahas" class="form-input w-full" rows="4" required>{{ $penjadwalan->topik_dibahas }}</textarea>
         </div>
+        
+        <!-- Nama Pengirim -->
+        <div class="mb-4">
+            <label for="nama_pengirim" class="block text-sm font-medium text-gray-700">{{ __('Nama Pengirim') }}</label>
+            <input type="text" name="nama_pengirim" id="nama_pengirim" class="form-input w-full" value="{{ $penjadwalan->nama_pengirim }}" placeholder="Opsional">
+        </div>
+
+        <!-- Nama Penerima -->
+        <div class="mb-4">
+            <label for="nama_penerima" class="block text-sm font-medium text-gray-700">{{ __('Nama Penerima') }}</label>
+            <input type="text" name="nama_penerima" id="nama_penerima" class="form-input w-full" value="{{ $penjadwalan->nama_penerima }}" placeholder="Opsional">
+        </div>
 
         <!-- Solusi -->
         @if (auth()->user()->role === App\Enums\UserRole::Teacher)

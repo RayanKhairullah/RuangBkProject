@@ -11,8 +11,10 @@ class Catatan extends Model
 
     protected $fillable = [
         'user_id',
+        'nama_siswa',
         'room_id',
         'guru_id',
+        'guru_pembimbing',
         'kasus',
         'tanggal',
         'catatan_guru',

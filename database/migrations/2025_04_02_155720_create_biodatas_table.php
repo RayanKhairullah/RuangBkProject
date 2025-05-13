@@ -13,11 +13,12 @@ return new class extends Migration
     {
         Schema::create('biodatas', function (Blueprint $table) {
             $table->id();
+            $table->string('nama_siswa');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('nisn')->unique();
             $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan']);
-            $table->foreignId('jurusan_id')->constrained('jurusans')->onDelete('cascade');
             $table->foreignId('rooms_id')->constrained('rooms')->onDelete('cascade'); // Mengganti 'kelas' menjadi 'rooms'
+            $table->string('tempat_lahir');
             $table->string('telepon');
             $table->enum('agama', ['Islam', 'Kristen', 'Hindu', 'Budha', 'Lainnya']);
             $table->text('alamat');

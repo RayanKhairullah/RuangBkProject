@@ -11,10 +11,26 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class CatatanExport implements FromCollection, WithHeadings, WithMapping, WithStyles
 {
+    protected $userId;
+
+    /**
+     * Jika $userId = null, export semua catatan.
+     * Jika ada, export hanya catatan milik user tersebut.
+     */
+    public function __construct(?int $userId = null)
+    {
+        $this->userId = $userId;
+    }
+
     public function collection()
     {
-        // Ambil semua catatan dengan relasi
-        return Catatan::with(['user', 'room.jurusan', 'guru'])->get();
+        $query = Catatan::with(['user', 'room.jurusan', 'guru']);
+
+        if ($this->userId !== null) {
+            $query->where('user_id', $this->userId);
+        }
+
+        return $query->get();
     }
 
     public function headings(): array
@@ -51,13 +67,11 @@ class CatatanExport implements FromCollection, WithHeadings, WithMapping, WithSt
     {
         // Bold header row
         $sheet->getStyle('A1:H1')->getFont()->setBold(true);
-
         // Autosize columns
         foreach (range('A', 'H') as $col) {
             $sheet->getColumnDimension($col)->setAutoSize(true);
         }
-
-        // Add thin borders
+        // Thin borders
         $highestRow = $sheet->getHighestRow();
         $highestCol = $sheet->getHighestColumn();
         $sheet->getStyle("A1:{$highestCol}{$highestRow}")

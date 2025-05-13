@@ -8,13 +8,15 @@ return new class extends Migration {
     {
         Schema::create('penjadwalan_konselings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pengirim_id')->constrained('users')->onDelete('cascade'); // Relasi ke tabel users
-            $table->foreignId('penerima_id')->constrained('users')->onDelete('cascade'); // Relasi ke tabel users
+            $table->foreignId('pengirim_id')->constrained('users')->onDelete('cascade');
+            $table->string('nama_pengirim') ->nullable();
+            $table->foreignId('penerima_id')->constrained('users')->onDelete('cascade');
+            $table->string('nama_penerima') ->nullable();
             $table->string('lokasi');
             $table->dateTime('tanggal');
             $table->text('topik_dibahas');
-            $table->text('solusi')->nullable(); // Diisi oleh guru setelah jadwal selesai
-            $table->enum('status', ['Complete', 'Incomplete'])->default('Incomplete'); // Status jadwal
+            $table->text('solusi')->nullable();
+            $table->enum('status', ['Complete', 'Incomplete'])->default('Incomplete');
             $table->timestamps();
         });
     }
