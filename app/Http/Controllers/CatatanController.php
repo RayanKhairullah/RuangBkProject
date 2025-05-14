@@ -16,11 +16,11 @@ class CatatanController extends Controller
     public function index()
     {
         if (Auth::user()->role === UserRole::Teacher) {
-            $catatans = Catatan::with(['user', 'room', 'guru'])->get();
+            $catatans = Catatan::with(['user', 'room', 'guru'])->paginate(10);
         } else {
             $catatans = Catatan::with(['user', 'room', 'guru'])
                 ->where('user_id', Auth::id())
-                ->get();
+                ->paginate(10);
         }
             
         return view('catatans.index', compact('catatans'));

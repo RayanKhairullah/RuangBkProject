@@ -18,7 +18,7 @@ class PenjadwalanKonselingController extends Controller
         $jadwals = PenjadwalanKonseling::with(['pengirim', 'penerima'])
             ->where('pengirim_id', Auth::id())
             ->orWhere('penerima_id', Auth::id())
-            ->get();
+            ->paginate(10);
 
         return view('penjadwalan.index', compact('jadwals'));
     }
@@ -94,17 +94,18 @@ class PenjadwalanKonselingController extends Controller
     }
 
     public function send(PenjadwalanKonseling $penjadwalan)
-    {
-        // Pastikan hanya pengirim atau penerima yang dapat mengirim email
-        if (Auth::id() !== $penjadwalan->pengirim_id && Auth::id() !== $penjadwalan->penerima_id) {
-            abort(403, 'Unauthorized action.');
-        }
-    
-        // Kirim email ke penerima
-        Mail::to($penjadwalan->penerima->email)->send(new KonselingNotification($penjadwalan));
-    
-        return redirect()->route('penjadwalan.index')->with('success', 'Jadwal berhasil dikirim ke email penerima.');
+{
+    // Pastikan hanya pengirim atau penerima yang dapat mengirim email
+    if (Auth::id() !== $penjadwalan->pengirim_id && Auth::id() !== $penjadwalan->penerima_id) {
+        abort(403, 'Unauthorized action.');
     }
+
+    // Kirim email ke penerima
+    Mail::to($penjadwalan->penerima->email)->send(new KonselingNotification($penjadwalan));
+
+    // Tambahkan flash message
+    return redirect()->route('penjadwalan.index')->with('success', 'Jadwal berhasil dikirim ke email penerima.');
+}
 
     public function destroy(PenjadwalanKonseling $penjadwalan)
     {

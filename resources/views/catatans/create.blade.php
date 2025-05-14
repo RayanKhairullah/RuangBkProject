@@ -1,14 +1,15 @@
 <x-layouts.app :title="__('Buat Catatan Prilaku')">
-    <h1 class="text-2xl font-bold">{{ __('Buat Catatan Prilaku') }}</h1>
+    <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">{{ __('Buat Catatan Prilaku') }}</h1>
 
-    <form action="{{ route('catatans.store') }}" method="POST" class="mt-4">
+    <form action="{{ route('catatans.store') }}" method="POST" class="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
         @csrf
+
         <!-- Pilih Penerima -->
         <div class="mb-4">
-            <label for="user_id" class="block text-sm font-medium text-gray-700">
+            <label for="user_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 {{ __('Pilih Penerima') }}
             </label>
-            <select name="user_id" id="user_id" class="form-input w-full select2" required>
+            <select name="user_id" id="user_id" class="form-input mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:ring-blue-500 focus:border-blue-500" required>
                 <option value="">{{ __('Pilih Penerima') }}</option>
                 @foreach ($users as $user)
                     <option value="{{ $user->id }}">
@@ -20,8 +21,8 @@
 
         <!-- Pilih Room -->
         <div class="mb-4">
-            <label for="room_id" class="block text-sm font-medium text-gray-700">{{ __('Pilih Kelas') }}</label>
-            <select name="room_id" id="room_id" class="form-input w-full" required>
+            <label for="room_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Pilih Kelas') }}</label>
+            <select name="room_id" id="room_id" class="form-input mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:ring-blue-500 focus:border-blue-500" required>
                 <option value="">{{ __('Pilih Kelas') }}</option>
                 @foreach ($rooms as $room)
                     <option value="{{ $room->id }}">
@@ -33,28 +34,30 @@
 
         <!-- Kasus -->
         <div class="mb-4">
-            <label for="kasus" class="block text-sm font-medium text-gray-700">{{ __('Kasus') }}</label>
-            <input type="text" name="kasus" id="kasus" class="form-input w-full" required>
+            <label for="kasus" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Kasus') }}</label>
+            <input type="text" name="kasus" id="kasus" class="form-input mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:ring-blue-500 focus:border-blue-500" required>
         </div>
 
         <!-- Tanggal -->
         <div class="mb-4">
-            <label for="tanggal" class="block text-sm font-medium text-gray-700">{{ __('Tanggal') }}</label>
-            <input type="date" name="tanggal" id="tanggal" class="form-input w-full" required>
+            <label for="tanggal" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Tanggal') }}</label>
+            <input type="date" name="tanggal" id="tanggal" class="form-input mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:ring-blue-500 focus:border-blue-500" required>
         </div>
 
         <!-- Catatan Guru -->
         <div class="mb-4">
-            <label for="catatan_guru" class="block text-sm font-medium text-gray-700">{{ __('Catatan Guru') }}</label>
-            <textarea name="catatan_guru" id="catatan_guru" class="form-input w-full" rows="4" required></textarea>
+            <label for="catatan_guru" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Catatan Guru') }}</label>
+            <textarea name="catatan_guru" id="catatan_guru" class="form-input mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:ring-blue-500 focus:border-blue-500" rows="4" required></textarea>
         </div>
 
         <!-- Poin -->
         <div class="mb-4">
-            <label for="poin" class="block text-sm font-medium text-gray-700">{{ __('Poin') }}</label>
-            <input type="number" name="poin" id="poin" class="form-input w-full" min="10" max="100" required>
+            <label for="poin" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Poin') }}</label>
+            <input type="number" name="poin" id="poin" class="form-input mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:ring-blue-500 focus:border-blue-500" min="10" max="100" required>
         </div>
 
-        <button type="submit" class="btn btn-primary">{{ __('Simpan') }}</button>
+        <button type="submit" class="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-md shadow-md dark:bg-blue-600 dark:hover:bg-blue-700">
+            {{ __('Simpan') }}
+        </button>
     </form>
 </x-layouts.app>

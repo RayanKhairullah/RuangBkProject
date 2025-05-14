@@ -11,8 +11,11 @@ class RoomController extends Controller
 {
     public function index()
     {
-        $rooms = Room::with('jurusan')->get();
-        return view('rooms.index', compact('rooms'));
+    $jurusans = Jurusan::all(); // Ambil semua jurusan
+    $tingkatans = Room::select('tingkatan_rooms')->distinct()->get(); // Ambil tingkatan unik
+    $rooms = Room::with('jurusan')->get();
+
+    return view('rooms.index', compact('rooms', 'jurusans', 'tingkatans'));
     }
 
     public function create()

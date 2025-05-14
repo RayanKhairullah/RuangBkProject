@@ -64,3 +64,15 @@ select:focus[data-flux-control] {
 /* \[:where(&)\]:size-4 {
     @apply size-4;
 } */
+
+/* app.css */
+.card {
+  @apply p-4 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 transition-transform hover:scale-105;
+}
+.card-title {
+  @apply text-lg font-semibold mb-3;
+}
+.card-body {
+  @apply overflow-hidden;
+}
+

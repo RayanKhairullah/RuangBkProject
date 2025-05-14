@@ -8,12 +8,12 @@
         <!-- Name -->
         <flux:input
             wire:model="name"
-            :label="__('Name')"
+            :label="__('Nama')"
             type="text"
             required
             autofocus
             autocomplete="name"
-            :placeholder="__('Full name')"
+            :placeholder="__('Nama Lengkap')"
         />
 
         <!-- Email Address -->
@@ -29,10 +29,10 @@
         <!-- Kode Rooms -->
         <flux:select
             wire:model="kode_rooms"
-            :label="__('Kode Rooms')"
+            :label="__('Kode kelas')"
             required
             >
-            <option value="">{{ __('Select a room') }}</option>
+            <option value="">{{ __('pilih kelas') }}</option>
             @foreach ($rooms as $room)
                 <option value="{{ $room['kode_rooms'] }}">
                     {{ $room['kode_rooms'] }} - {{ $room['jurusan']['nama_jurusan'] ?? '' }}

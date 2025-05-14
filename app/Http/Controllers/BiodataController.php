@@ -25,11 +25,11 @@ class BiodataController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nisn' => 'required|string|max:255|unique:biodatas,nisn',
+            'nisn' => 'required|numeric|max:255|unique:biodatas,nisn',
             'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
             'jurusan_id' => 'required|exists:jurusans,id',
             'rooms_id' => 'required|exists:rooms,id',
-            'telepon' => 'required|string|max:15',
+            'telepon' => 'required|numeric|max:15',
             'agama' => 'required|in:Islam,Kristen,Hindu,Budha,Lainnya',
             'alamat' => 'required|string|max:255',
             'tanggal_lahir' => 'required|date',

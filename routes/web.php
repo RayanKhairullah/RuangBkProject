@@ -11,16 +11,12 @@ use App\Http\Controllers\BiodataController;
 use App\Http\Controllers\PenjadwalanKonselingController;
 use App\Http\Controllers\CatatanController;
 use App\Http\Controllers\SuratPanggilanController;
+use App\Http\Controllers\DashboardController;
 
 //Users Routes
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
-
-
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('biodatas/create', [BiodataController::class, 'create'])->name('biodatas.create');
@@ -51,6 +47,7 @@ Route::middleware(['auth', 'verified', 'teacher'])->group(function () {
     Route::resource('surat-panggilan', SuratPanggilanController::class);
     Route::get('surat-panggilan/{id}/download', [SuratPanggilanController::class, 'generate'])
             ->name('surat-panggilan.download');
+            
 });
 
 //Settings Routes
@@ -62,4 +59,5 @@ Route::middleware(['auth'])->group(function () {
     Route::get('settings/appearance', Appearance::class)->name('settings.appearance');
 });
 
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
 require __DIR__.'/auth.php';
