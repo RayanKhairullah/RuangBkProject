@@ -74,4 +74,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('settings/appearance', Appearance::class)->name('settings.appearance');
 });
 
+Route::get('/forbidden', function () {
+    abort(403);
+});
+
+
 require __DIR__.'/auth.php';

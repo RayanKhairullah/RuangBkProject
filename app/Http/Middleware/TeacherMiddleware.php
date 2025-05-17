@@ -20,6 +20,11 @@ class TeacherMiddleware
         if (Auth::check() && Auth::user()->role === UserRole::Teacher && $request->route()->getName() === 'dashboard') {
             return redirect()->route('teacher.dashboard');
         }
+        if (!in_array(Auth::user()->role, ['user', 'teacher'])) {
+            abort(403, 'Akses ditolak.');
+        }
+        
         return $next($request);
     }
+    
 }
