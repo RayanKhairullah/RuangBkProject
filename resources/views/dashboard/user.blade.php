@@ -6,7 +6,7 @@
     </div>
 
     {{-- Pop-up for Biodata --}}
-    @if (!$user->biodata_filled) {{-- Kondisi jika biodata belum diisi --}}
+    @if (!auth()->user()->biodata) {{-- Kondisi jika biodata belum diisi --}}
         <div x-data="{ open: false }" x-init="setTimeout(() => open = true, 3000)" x-show="open" class="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm">
             <!-- Pop-up Content -->
             <div x-show="open" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-90" class="relative bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-md w-full">
