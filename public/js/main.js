@@ -42,18 +42,17 @@ window.onclick = function(event) {
     }
 }
 
-// Toggle sidebar ketika hamburger menu diklik
+// Toggle sidebar when the hamburger menu is clicked
 function toggleSidebar() {
     const sidebar = document.querySelector('.sidebar');
     const overlay = document.querySelector('.overlay');
     
     sidebar.classList.toggle('translate-x-full');
-    sidebar.classList.toggle('translate-x-0');
     overlay.classList.toggle('show');
 }
 
   
-// Tutup sidebar ketika overlay diklik
+// Close sidebar when overlay is clicked
     document.querySelector('.overlay').onclick = function() {
     toggleSidebar();
 }
