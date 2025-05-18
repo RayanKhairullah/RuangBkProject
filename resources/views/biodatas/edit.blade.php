@@ -1,140 +1,182 @@
 <x-layouts.app :title="__('Edit Biodata')">
-  <!-- Corner Backgrounds -->
-  <div class="absolute top-0 left-0 w-24 h-24 bg-yellow-400 rounded-br-2xl z-0"></div>
-  <div class="absolute top-0 right-0 w-24 h-24 bg-indigo-400 rounded-bl-2xl z-0"></div>
-  <div class="absolute bottom-0 left-0 w-24 h-24 bg-indigo-400 rounded-tr-2xl z-0"></div>
-  <div class="absolute bottom-0 right-0 w-24 h-24 bg-yellow-400 rounded-tl-2xl z-0"></div>
+  <form action="{{ route('biodatas.update') }}"
+        method="POST"
+        enctype="multipart/form-data"
+        class="bg-white p-6 sm:p-8 rounded-xl shadow-md w-full max-w-4xl mx-auto my-8">
+    @csrf
+    @method('PUT')
 
-  <!-- Tombol Kembali -->
-  <div class="absolute top-4 left-4 z-20">
-    <a href="{{ route('biodatas.show') }}" class="bg-indigo-400 text-white px-4 py-2 rounded-lg shadow font-semibold inline-block">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
-            <path fill-rule="evenodd" d="M12.5 9.75A2.75 2.75 0 0 0 9.75 7H4.56l2.22 2.22a.75.75 0 1 1-1.06 1.06l-3.5-3.5a.75.75 0 0 1 0-1.06l3.5-3.5a.75.75 0 0 1 1.06 1.06L4.56 5.5h5.19a4.25 4.25 0 0 1 0 8.5h-1a.75.75 0 0 1 0-1.5h1a2.75 2.75 0 0 0 2.75-2.75Z" clip-rule="evenodd" />
-          </svg>          
-    </a>
-  </div>
+    <h2 class="text-center text-xl font-semibold mb-6 text-black">Edit Biodata</h2>
 
+    <h3 class="mb-2 font-semibold text-black">Data Wajib</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Kiri -->
+      <div class="flex flex-col gap-3">
+        <input name="nama_siswa" placeholder="Nama Siswa"
+               value="{{ old('nama_siswa', $biodata->nama_siswa) }}"
+               class="w-full px-4 py-2 rounded-full bg-indigo-100 text-sm outline-none"
+               required />
 
+        <input name="nisn" placeholder="NISN"
+               value="{{ old('nisn', $biodata->nisn) }}"
+               class="w-full px-4 py-2 rounded-full bg-indigo-100 text-sm outline-none"
+               required />
 
-  <!-- Konten Utama -->
-  <main class="min-h-screen flex items-center justify-center px-4 md:px-12 bg-white">
-    <div class="bg-white rounded-xl shadow-xl max-w-6xl w-full p-8 md:p-4 z-10">
-      <h1 class="text-center text-2xl md:text-3xl font-light mb-8">Biodata Lengkap</h1>
+        <input name="tempat_lahir" placeholder="Tempat Lahir"
+               value="{{ old('tempat_lahir', $biodata->tempat_lahir) }}"
+               class="w-full px-4 py-2 rounded-full bg-indigo-100 text-sm outline-none"
+               required />
 
-      <form action="{{ route('biodatas.update') }}" method="POST" enctype="multipart/form-data" >
-        @csrf
-        @method('PUT')
-    
-        <div class="flex flex-col md:flex-row justify-between gap-8">
-            <!-- Kolom Kiri -->
-            <div class="md:w-2/3 grid grid-cols-3 gap-y-1 text-gray-800 text-sm md:text-base">
-                <label class="font-normal" for="nisn">NISN</label><span>:</span>
-                <div class="mb-2">
-                    <input type="text" name="nisn" id="nisn" value="{{ old('nisn', $biodata->nisn) }}" class="w-full border px-2 py-1 rounded @error('nisn') border-red-500 @enderror" required>
-                    @error('nisn')<p class="text-red-500 text-sm">{{ $message }}</p>@enderror
-                </div>
-    
-                <label class="font-normal" for="jenis_kelamin">Jenis Kelamin</label><span>:</span>
-                <div class="mb-2">
-                    <select name="jenis_kelamin" id="jenis_kelamin" class="w-full border px-2 py-1 rounded @error('jenis_kelamin') border-red-500 @enderror" required>
-                        <option value="Laki-laki" {{ $biodata->jenis_kelamin == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
-                        <option value="Perempuan" {{ $biodata->jenis_kelamin == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
-                    </select>
-                    @error('jenis_kelamin')<p class="text-red-500 text-sm">{{ $message }}</p>@enderror
-                </div>
-    
-                <label class="font-normal" for="jurusan_id">Jurusan</label><span>:</span>
-                <div class="mb-2">
-                    <select name="jurusan_id" id="jurusan_id" class="w-full border px-2 py-1 rounded @error('jurusan_id') border-red-500 @enderror" required>
-                        @foreach ($jurusans as $jurusan)
-                            <option value="{{ $jurusan->id }}" {{ $biodata->jurusan_id == $jurusan->id ? 'selected' : '' }}>
-                                {{ $jurusan->nama_jurusan }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('jurusan_id')<p class="text-red-500 text-sm">{{ $message }}</p>@enderror
-                </div>
-    
-                <label class="font-normal" for="rooms_id">Kelas</label><span>:</span>
-                <div class="mb-2">
-                    <select name="rooms_id" id="rooms_id" class="w-full border px-2 py-1 rounded @error('rooms_id') border-red-500 @enderror" required>
-                        @foreach ($rooms as $room)
-                            <option value="{{ $room->id }}" {{ $biodata->rooms_id == $room->id ? 'selected' : '' }}>
-                                {{ $room->tingkatan_rooms }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('rooms_id')<p class="text-red-500 text-sm">{{ $message }}</p>@enderror
-                </div>
-    
-                <label class="font-normal" for="telepon">Telepon</label><span>:</span>
-                <div class="mb-2">
-                    <input type="text" name="telepon" id="telepon" class="w-full border px-2 py-1 rounded @error('telepon') border-red-500 @enderror" value="{{ $biodata->telepon }}" required>
-                    @error('telepon')<p class="text-red-500 text-sm">{{ $message }}</p>@enderror
-                </div>
-    
-                <label class="font-normal" for="agama">Agama</label><span>:</span>
-                <div class="mb-2">
-                    <select name="agama" id="agama" class="w-full border px-2 py-1 rounded @error('agama') border-red-500 @enderror" required>
-                        <option value="Islam" {{ $biodata->agama == 'Islam' ? 'selected' : '' }}>Islam</option>
-                        <option value="Kristen" {{ $biodata->agama == 'Kristen' ? 'selected' : '' }}>Kristen</option>
-                        <option value="Hindu" {{ $biodata->agama == 'Hindu' ? 'selected' : '' }}>Hindu</option>
-                        <option value="Budha" {{ $biodata->agama == 'Budha' ? 'selected' : '' }}>Budha</option>
-                        <option value="Lainnya" {{ $biodata->agama == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
-                    </select>
-                    @error('agama')<p class="text-red-500 text-sm">{{ $message }}</p>@enderror
-                </div>
-    
-                <label class="font-normal" for="alamat">Alamat</label><span>:</span>
-                <div class="mb-2">
-                    <textarea name="alamat" id="alamat" class="w-full border px-2 py-1 rounded @error('alamat') border-red-500 @enderror" required>{{ $biodata->alamat }}</textarea>
-                    @error('alamat')<p class="text-red-500 text-sm">{{ $message }}</p>@enderror
-                </div>
-    
-                <label class="font-normal" for="tanggal_lahir">Tanggal Lahir</label><span>:</span>
-                <div class="mb-2">
-                    <input type="date" name="tanggal_lahir" id="tanggal_lahir" class="w-full border px-2 py-1 rounded @error('tanggal_lahir') border-red-500 @enderror" value="{{ $biodata->tanggal_lahir }}" required>
-                    @error('tanggal_lahir')<p class="text-red-500 text-sm">{{ $message }}</p>@enderror
-                </div>
-    
-                <label class="font-normal" for="gol_darah">Golongan Darah</label><span>:</span>
-                <div class="mb-2">
-                    <select name="gol_darah" id="gol_darah" class="w-full border px-2 py-1 rounded @error('gol_darah') border-red-500 @enderror" required>
-                        <option value="A" {{ $biodata->gol_darah == 'A' ? 'selected' : '' }}>A</option>
-                        <option value="B" {{ $biodata->gol_darah == 'B' ? 'selected' : '' }}>B</option>
-                        <option value="AB" {{ $biodata->gol_darah == 'AB' ? 'selected' : '' }}>AB</option>
-                        <option value="O" {{ $biodata->gol_darah == 'O' ? 'selected' : '' }}>O</option>
-                    </select>
-                    @error('gol_darah')<p class="text-red-500 text-sm">{{ $message }}</p>@enderror
-                </div>
-    
-                <label class="font-normal" for="status">Status</label><span>:</span>
-                <div class="mb-2">
-                    <input type="text" name="status" id="status" class="w-full border px-2 py-1 rounded @error('status') border-red-500 @enderror" value="{{ $biodata->status }}" required>
-                    @error('status')<p class="text-red-500 text-sm">{{ $message }}</p>@enderror
-                </div>
-            </div>
-    
-            <!-- Kolom Kanan -->
-            <div class="md:w-1/3 flex flex-col items-center md:items-end justify-between">
-                @if($biodata->image)
-                <div class="w-40 h-52 bg-gray-200 flex items-center justify-center rounded shadow">
-                    <img src="{{ asset('storage/' . $biodata->image) }}" alt="Foto Siswa"
-                         class="max-w-full max-h-full object-contain rounded">
-                  </div>
-                @else
-                    <div class="w-40 h-52 bg-blue-700 text-white flex items-center justify-center rounded text-sm">
-                        Foto Siswa
-                    </div>
-            @endif
-            <div class="mb-4">
-            <label for="image" class="block text-sm font-medium text-gray-700">Ganti Foto</label>
-            <input type="file" name="image" id="image" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-indigo-200 focus:border-indigo-300">
-        </div>
+        <input type="date" name="tanggal_lahir"
+               value="{{ old('tanggal_lahir', $biodata->tanggal_lahir) }}"
+               class="w-full px-4 py-2 rounded-full bg-indigo-100 text-sm outline-none"
+               required />
 
-<button id="simpanBtn" type="button" class="mt-4 text-sm text-gray-700 hover:underline self-end">Simpan</button>
+        <select name="jenis_kelamin" required
+                class="w-full px-4 py-2 rounded-full bg-indigo-100 text-sm outline-none">
+          <option disabled>Jenis Kelamin</option>
+          <option value="Laki-laki" @selected(old('jenis_kelamin', $biodata->jenis_kelamin)=='Laki-laki')>
+            Laki-laki
+          </option>
+          <option value="Perempuan" @selected(old('jenis_kelamin', $biodata->jenis_kelamin)=='Perempuan')>
+            Perempuan
+          </option>
+        </select>
 
-    </form>
+          <input name="kode_rooms" id="kode_rooms"
+                value="{{ old('kode_rooms', $biodata->room->kode_rooms) }}"
+                class="w-full px-4 py-2 rounded-full bg-indigo-100 text-sm outline-none" required>
+
+        {{-- <select name="jurusan_id" required
+                class="w-full px-4 py-2 rounded-full bg-indigo-100 text-sm outline-none">
+          <option disabled>Jurusan</option>
+          @foreach ($jurusans as $jurusan)
+            <option value="{{ $jurusan->id }}"
+                    @selected(old('jurusan_id', $biodata->jurusan_id)==$jurusan->id)>
+              {{ $jurusan->nama_jurusan }}
+            </option>
+          @endforeach
+        </select>
+
+        <select name="room_id" required
+                class="w-full px-4 py-2 rounded-full bg-indigo-100 text-sm outline-none">
+          <option disabled>Kelas</option>
+          @foreach ($rooms as $room)
+            <option value="{{ $room->id }}"
+                    @selected(old('room_id', $biodata->room_id)==$room->id)>
+              {{ $room->tingkatan_rooms }}
+            </option>
+          @endforeach
+        </select> --}}
+      </div>
+
+      <!-- Kanan -->
+      <div class="flex flex-col gap-3">
+        <input name="telepon" placeholder="Telepon"
+               value="{{ old('telepon', $biodata->telepon) }}"
+               class="w-full px-4 py-2 rounded-full bg-indigo-100 text-sm outline-none"
+               required />
+
+        <select name="agama" required
+                class="w-full px-4 py-2 rounded-full bg-indigo-100 text-sm outline-none">
+          <option disabled>Agama</option>
+          @foreach (['Islam','Kristen','Hindu','Budha','Lainnya'] as $agama)
+            <option value="{{ $agama }}"
+                    @selected(old('agama', $biodata->agama)==$agama)>{{ $agama }}</option>
+          @endforeach
+        </select>
+
+        <textarea name="alamat_ktp" placeholder="Alamat KTP"
+                  class="w-full px-4 py-2 rounded-2xl bg-indigo-100 text-sm outline-none resize-none"
+                  required>{{ old('alamat_ktp', $biodata->alamat_ktp) }}</textarea>
+
+        <textarea name="alamat_domisili" placeholder="Alamat Domisili (jika beda)"
+                  class="w-full px-4 py-2 rounded-2xl bg-indigo-100 text-sm outline-none resize-none">
+          {{ old('alamat_domisili', $biodata->alamat_domisili) }}
+        </textarea>
+
+        <select name="gol_darah" required
+                class="w-full px-4 py-2 rounded-full bg-indigo-100 text-sm outline-none">
+          <option disabled>Golongan Darah</option>
+          @foreach (['A','B','AB','O'] as $g)
+            <option value="{{ $g }}"
+                    @selected(old('gol_darah', $biodata->gol_darah)==$g)>{{ $g }}</option>
+          @endforeach
+        </select>
+
+        <input name="status" placeholder="Status"
+               value="{{ old('status', $biodata->status) }}"
+               class="w-full px-4 py-2 rounded-full bg-indigo-100 text-sm outline-none"
+               required placeholder="Pelajar" />
+      </div>
     </div>
-  </main>
+
+        {{-- Seksi tambahan --}}
+    <h3 class="mt-6 font-semibold text-black">Data Pribadi Lainnya</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+      <input name="cita_cita" placeholder="Cita-cita"
+             value="{{ old('cita_cita') }}"
+             class="px-4 py-2 rounded-full bg-indigo-100" />
+      <input name="hobi" placeholder="Hobi"
+             value="{{ old('hobi') }}"
+             class="px-4 py-2 rounded-full bg-indigo-100" />
+      <input name="minat_bakat" placeholder="Minat & Bakat"
+             value="{{ old('minat_bakat') }}"
+             class="px-4 py-2 rounded-full bg-indigo-100" />
+    </div>
+
+    {{-- Riwayat Pendidikan --}}
+    <h3 class="mt-6 font-semibold text-black">Riwayat Pendidikan</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+      <input name="sd" placeholder="SD" value="{{ old('sd') }}"
+             class="px-4 py-2 rounded-full bg-indigo-100" />
+      <input name="smp" placeholder="SMP" value="{{ old('smp') }}"
+             class="px-4 py-2 rounded-full bg-indigo-100" />
+    </div>
+
+    {{-- Data Orang Tua --}}
+    <h3 class="mt-6 font-semibold text-black">Data Orang Tua</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+      <input name="nama_ayah" placeholder="Nama Ayah"
+             value="{{ old('nama_ayah') }}"
+             class="px-4 py-2 rounded-full bg-indigo-100" />
+      <input name="pekerjaan_ayah" placeholder="Pekerjaan Ayah"
+             value="{{ old('pekerjaan_ayah') }}"
+             class="px-4 py-2 rounded-full bg-indigo-100" />
+      <input name="no_hp_ayah" placeholder="No HP Ayah"
+             value="{{ old('no_hp_ayah') }}"
+             class="px-4 py-2 rounded-full bg-indigo-100" />
+      <input name="nama_ibu" placeholder="Nama Ibu"
+             value="{{ old('nama_ibu') }}"
+             class="px-4 py-2 rounded-full bg-indigo-100" />
+      <input name="pekerjaan_ibu" placeholder="Pekerjaan Ibu"
+             value="{{ old('pekerjaan_ibu') }}"
+             class="px-4 py-2 rounded-full bg-indigo-100" />
+      <input name="no_hp_ibu" placeholder="No HP Ibu"
+             value="{{ old('no_hp_ibu') }}"
+             class="px-4 py-2 rounded-full bg-indigo-100" />
+    </div>
+
+    <div>
+      <h3 class="mt-3 font-semibold text-black">Foto Siswa</h3>
+      <label class="block mb-1">Foto Siswa</label>
+        @if($biodata->image)
+          <img src="{{ asset('storage/'.$biodata->image) }}"
+            class="max-w-full max-h-40 object-contain">
+        @endif
+        <input type="file" name="image" accept="image/*"
+          class="w-full px-4 py-2 rounded-full bg-indigo-100 text-sm outline-none" />
+    </div>
+
+    <div class="mt-6 flex justify-end space-x-2">
+      <button type="submit"
+              class="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-full">
+        Update
+      </button>
+      <a href="{{ route('biodatas.show') }}"
+         class="bg-gray-300 hover:bg-gray-400 text-black px-5 py-2 rounded-full">
+        Batal
+      </a>
+    </div>
+  </form>
 </x-layouts.app>

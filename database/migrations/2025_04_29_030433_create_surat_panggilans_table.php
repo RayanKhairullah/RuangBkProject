@@ -13,11 +13,10 @@ return new class extends Migration
     {
         Schema::create('surat_panggilans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('nomor_surat');
-            $table->string('penyebab');
-            $table->date('tanggal');
-            $table->string('waktu');
+            $table->foreignId('room_id')->constrained('rooms')->onDelete('cascade');
+            $table->string('nama_siswa');
+            $table->string('nomor_surat')->unique();
+            $table->dateTime('tanggal_waktu');
             $table->string('tempat');
             $table->text('tujuan');
             $table->timestamps();

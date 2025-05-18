@@ -12,8 +12,11 @@ class Biodata extends Model
     protected $table = 'biodatas';
 
     protected $fillable = [
-        'user_id', 'nisn', 'jenis_kelamin', 'jurusan_id', 'rooms_id', 'telepon',
-        'agama', 'alamat', 'tanggal_lahir', 'gol_darah', 'status', 'image',
+        'user_id', 'nama_siswa', 'nisn', 'jenis_kelamin',
+        'tempat_lahir', 'tanggal_lahir', 'telepon', 'agama',
+        'alamat_ktp', 'alamat_domisili', 'cita_cita', 'hobi', 'minat_bakat',
+        'sd', 'smp', 'nama_ayah', 'pekerjaan_ayah', 'no_hp_ayah',
+        'nama_ibu', 'pekerjaan_ibu', 'no_hp_ibu', 'gol_darah', 'status', 'image',
     ];
 
     public function user()
@@ -26,7 +29,7 @@ class Biodata extends Model
         return $this->belongsTo(Jurusan::class);
     }
 
-    public function rooms()
+    public function room()
     {
         return $this->belongsTo(Room::class);
     }

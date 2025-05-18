@@ -6,17 +6,25 @@ use App\Models\Room;
 use App\Models\Jurusan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+use APp\Enums\UserRole;
 
 class RoomController extends Controller
 {
     public function index()
     {
-        $rooms = Room::with('jurusan')->get();
+        if (Auth::user()->role !== UserRole::Teacher) {
+            abort(403, 'Unauthorized action.');
+        }
+        $rooms = Room::with('jurusan')->paginate(10); // Gunakan paginate langsung tanpa get()
         return view('rooms.index', compact('rooms'));
     }
 
     public function create()
     {
+        if (Auth::user()->role !== UserRole::Teacher) {
+            abort(403, 'Unauthorized action.');
+        }
         $jurusans = Jurusan::all();
         $rooms    = Room::all();
         return view('rooms.create', compact('jurusans', 'rooms'));
@@ -42,6 +50,9 @@ class RoomController extends Controller
     
     public function edit(Room $room)
     {
+        if (Auth::user()->role !== UserRole::Teacher) {
+            abort(403, 'Unauthorized action.');
+        }
         $jurusans = Jurusan::all();
         return view('rooms.edit', compact('room', 'jurusans'));
     }
@@ -63,12 +74,18 @@ class RoomController extends Controller
 
     public function show(Room $room)
     {
+        if (Auth::user()->role !== UserRole::Teacher) {
+            abort(403, 'Unauthorized action.');
+        }
         $users = $room->users;
         return view('rooms.show', compact('room', 'users'));
     }
 
     public function destroy(Room $room)
     {
+        if (Auth::user()->role !== UserRole::Teacher) {
+            abort(403, 'Unauthorized action.');
+        }
         $room->delete();
 
         return redirect()->route('rooms.index')->with('success', 'Room deleted successfully.');

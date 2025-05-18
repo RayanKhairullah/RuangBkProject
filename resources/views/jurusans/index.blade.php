@@ -31,4 +31,9 @@
             </tbody>
         </table>
     </div>
+
+        <!-- Tampilkan tautan pagination -->
+    <div class="mt-4">
+        {{ $jurusans->links('pagination::tailwind') }}
+    </div>
 </x-layouts.app>

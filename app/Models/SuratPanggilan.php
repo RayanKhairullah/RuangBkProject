@@ -10,27 +10,20 @@ class SuratPanggilan extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
+        'nama_siswa',
         'nomor_surat',
-        'penyebab',
-        'tanggal',
-        'waktu',
+        'tanggal_waktu',
         'tempat',
         'tujuan',
+        'room_id',
     ];
 
-    /**
-     * Casting attributes ke type Carbon/Date.
-     * Dengan ini, $model->tanggal menjadi Carbon instance.
-     *
-     * @var array<string,string>
-     */
     protected $casts = [
-        'tanggal' => 'date',        // atau 'datetime' jika butuh waktu juga :contentReference[oaicite:1]{index=1}
+        'tanggal_waktu' => 'datetime',
     ];
 
-    public function siswa()
+    public function room()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(\App\Models\Room::class);
     }
 }

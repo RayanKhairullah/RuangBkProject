@@ -5,40 +5,53 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Exports\BiodataExport;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Auth;
+use App\Enums\UserRole;
+
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::where('role', 'user')->get();
+        if (Auth::user()->role !== UserRole::Teacher) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // Daftar filter yang diperbolehkan
+        $allowedFilters = [
+            'name'      => fn($query, $value) => $query->where('name', 'like', "%{$value}%"),
+            'verified'  => fn($query, $value) => $value === '1'
+                ? $query->whereNotNull('email_verified_at')
+                : $query->whereNull('email_verified_at'),
+            'biodata'   => fn($query, $value) => $value === '1'
+                ? $query->whereHas('biodata')
+                : $query->doesntHave('biodata'),
+            // Tambahkan filter baru di sini, misal 'email', 'created_at', dsb.
+        ];
+
+        // Mulai query dasar
+        $query = User::where('role', UserRole::User->value);
+
+        // Iterasi request query dan apply filter jika ada di allowedFilters
+        foreach ($request->only(array_keys($allowedFilters)) as $filter => $value) {
+            if ($value !== null && $value !== '') {
+                $query = $allowedFilters[$filter]($query, $value);
+            }
+        }
+
+        // Urut dan paginate
+        $users = $query->orderBy('name')
+                    ->paginate(10)
+                    ->withQueryString();
+
         return view('users.index', compact('users'));
-    }
-
-    public function create()
-    {
-        return view('users.create');
-    }
-
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
-
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => 'user',
-        ]);
-
-        return redirect()->route('users.index')->with('success', 'User created successfully.');
     }
 
     public function showBiodata(User $user)
     {
+        if (Auth::user()->role !== UserRole::Teacher) {
+            abort(403, 'Unauthorized action.');
+        }
         $biodata = $user->biodata;
 
         if (!$biodata) {
@@ -48,31 +61,20 @@ class UserController extends Controller
         return view('users.biodata', compact('biodata', 'user'));
     }
 
-    public function edit(User $user)
-    {
-        return view('users.edit', compact('user'));
-    }
-
-    public function update(Request $request, User $user)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
-        ]);
-
-        $user->update($request->only('name', 'email'));
-
-        return redirect()->route('users.index')->with('success', 'User updated successfully.');
-    }
-
     public function destroy(User $user)
     {
+        if (Auth::user()->role !== UserRole::Teacher) {
+            abort(403, 'Unauthorized action.');
+        }
         $user->delete();
 
         return redirect()->route('users.index')->with('success', 'User deleted successfully.');
     }
     public function downloadBiodata(User $user)
     {
+        if (Auth::user()->role !== UserRole::Teacher) {
+            abort(403, 'Unauthorized action.');
+        }
         if (! $user->biodata) {
             return back()->withError('Biodata tidak ditemukan.');
         }

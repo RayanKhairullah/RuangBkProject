@@ -17,13 +17,13 @@
                     
                     @if (auth()->user()->role === App\Enums\UserRole::Teacher)
                             <flux:navlist.item icon="users" :href="route('users.index')" wire:navigate>{{ __('Users') }}</flux:navlist.item>
-                            <flux:navlist.item icon="list-bullet" :href="route('rooms.index')" wire:navigate>{{ __('Rooms') }}</flux:navlist.item>
+                            <flux:navlist.item icon="list-bullet" :href="route('rooms.index')" wire:navigate>{{ __('Kelas') }}</flux:navlist.item>
                             <flux:navlist.item icon="list-bullet" :href="route('jurusans.index')" wire:navigate>{{ __('Jurusan') }}</flux:navlist.item>
 
                         <flux:navlist.group :heading="__('Main Feature')" class="grid">
                             <flux:navlist.item icon="list-bullet" :href="route('penjadwalan.index')" wire:navigate>{{ __('Konseling') }}</flux:navlist.item>
                             <flux:navlist.item icon="list-bullet" :href="route('catatans.index')" wire:navigate>{{ __('Catatan Prilaku') }}</flux:navlist.item>
-                            <flux:dropdown position="bottom" align="start">
+                            {{-- <flux:dropdown position="bottom" align="start">
                                 <button class="w-full flex items-center justify-between px-4 py-2">
                                     <span class="flex items-center space-x-2">
                                         <flux:icon name="list-bullet" class="w-5 h-5" />
@@ -40,8 +40,14 @@
                                         {{ __('Surat X') }}
                                     </flux:menu.item>
                                 </flux:menu>
-                            </flux:dropdown>
+                            </flux:dropdown> --}}
                         </flux:navlist.group>
+
+                         <flux:navlist.group :heading="__('Surat Laporan')" class="grid">
+                            <flux:navlist.item icon="list-bullet" :href="route('surat_panggilans.index')" wire:navigate>{{ __('Surat Panggilan Ortu') }}</flux:navlist.item>
+                            {{-- <flux:navlist.item icon="list-bullet" :href="route('surat_panggilans.index')" wire:navigate>{{ __('Surat X') }}</flux:navlist.item>
+                            <flux:navlist.item icon="list-bullet" :href="route('surat_panggilans.index')" wire:navigate>{{ __('Surat Y') }}</flux:navlist.item> --}}
+                         </flux:navlist.group>
                     @endif
 
                     @if (auth()->user()->role === App\Enums\UserRole::User)
@@ -56,9 +62,9 @@
             <flux:spacer />
 
             <flux:navlist variant="outline">
-                <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
+                {{-- <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
                 {{ __('Repository') }}
-                </flux:navlist.item>
+                </flux:navlist.item> --}}
 
                 <flux:navlist.item icon="book-open-text" href="https://laravel.com/docs/starter-kits" target="_blank">
                 {{ __('Documentation') }}
@@ -164,144 +170,6 @@
         {{ $slot }}
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-        <!-- Chart.js core -->
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix@3.0.0/dist/chartjs-chart-matrix.min.js"></script>
-        <script>
-            function initSelect2() {
-                $('.select2').select2({
-                    placeholder: "{{ __('Pilih Penerima') }}",
-                    allowClear: true,
-                });
-            }
-        
-            // Inisialisasi saat halaman pertama dimuat
-            $(document).ready(initSelect2);
-        
-            // Inisialisasi ulang setelah Livewire navigasi
-            document.addEventListener('livewire:navigated', initSelect2);
-        </script>
-
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                // 1) Confusion Matrix Data (example 2×2)
-                const cmData = [
-                    { x: 0, y: 0, v: 50 },
-                    { x: 1, y: 0, v: 10 },
-                    { x: 0, y: 1, v: 5 },
-                    { x: 1, y: 1, v: 85 }
-                ];
-
-                new Chart(document.getElementById('confusionMatrixChart'), {
-                    type: 'matrix',
-                    data: {
-                        datasets: [{
-                            label: 'Confusion Matrix',
-                            data: cmData,
-                            backgroundColor(ctx) {
-                                const val = ctx.dataset.data[ctx.dataIndex].v;
-                                return `rgba(${255 * (val / 100)}, 0, ${255 * (1 - val / 100)}, 0.7)`;
-                            },
-                            // Guard chartArea undefined
-                            width: ({ chart }) => {
-                                const area = chart.chartArea;
-                                return area 
-                                    ? (area.width / 2) - 1 
-                                    : (chart.width / 2) - 1;
-                            },
-                            height: ({ chart }) => {
-                                const area = chart.chartArea;
-                                return area 
-                                    ? (area.height / 2) - 1 
-                                    : (chart.height / 2) - 1;
-                            },
-                            borderWidth: 1,
-                            borderColor: 'black'
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            x: { display: false, min: -0.5, max: 1.5 },
-                            y: { display: false, min: -0.5, max: 1.5 }
-                        },
-                        plugins: {
-                            tooltip: {
-                                callbacks: {
-                                    label(ctx) {
-                                        const { x, y, v } = ctx.raw;
-                                        const row = y === 1 ? 'Positive' : 'Negative';
-                                        const col = x === 1 ? 'Positive' : 'Negative';
-                                        return `${row}⇢${col}: ${v}`;
-                                    }
-                                }
-                            },
-                            legend: { display: false }
-                        }
-                    }
-                });
-
-                // 2) Donut Chart for Accuracy & F1 Score
-                new Chart(document.getElementById('metricsDonutChart'), {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Accuracy', 'F1 Score', 'Remaining'],
-                        datasets: [{
-                            data: [0.92, 0.85, 1 - 0.92],
-                            backgroundColor: ['#4caf50', '#2196f3', '#e0e0e0'],
-                            hoverOffset: 4
-                        }]
-                    },
-                    options: {
-                        aspectRatio: 1,
-                        plugins: {
-                            tooltip: {
-                                callbacks: {
-                                    label(ctx) {
-                                        return `${ctx.label}: ${(ctx.parsed * 100).toFixed(1)}%`;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-
-                // 3) Line Chart for Accuracy Over Time
-                new Chart(document.getElementById('accuracyLineChart'), {
-                    type: 'line',
-                    data: {
-                        labels: ['Epoch 1','Epoch 2','Epoch 3','Epoch 4','Epoch 5'],
-                        datasets: [{
-                            label: 'Accuracy',
-                            data: [0.76, 0.83, 0.88, 0.91, 0.92],
-                            borderColor: '#4caf50',
-                            borderWidth: 2,
-                            fill: false,
-                            tension: 0.2
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                suggestedMin: 0.5,
-                                suggestedMax: 1,
-                                ticks: {
-                                    callback: v => `${(v * 100).toFixed(0)}%`
-                                }
-                            }
-                        },
-                        plugins: {
-                            tooltip: {
-                                callbacks: {
-                                    label(ctx) {
-                                        return `Accuracy: ${(ctx.parsed.y * 100).toFixed(1)}%`;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-            });
-        </script>
         @fluxScripts
     </body>
 </html>

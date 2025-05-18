@@ -16,13 +16,13 @@ class CatatanController extends Controller
     public function index()
     {
         if (Auth::user()->role === UserRole::Teacher) {
-            $catatans = Catatan::with(['user', 'room', 'guru'])->get();
+            $catatans = Catatan::with(['user', 'room', 'guru'])->paginate(5);
             $students = User::where('role', UserRole::User)->get(); // Ambil semua siswa
         } else {
             $catatans = Catatan::with(['user', 'room', 'guru'])
                 ->where('user_id', Auth::id())
-                ->get();
-            $students = []; // Kosongkan untuk role User
+                ->paginate(5); // Gunakan paginate untuk konsistensi
+            $students = [];
         }
             
         return view('catatans.index', compact('catatans', 'students'));
@@ -46,18 +46,18 @@ class CatatanController extends Controller
         }
 
         $request->validate([
-            'user_id' => 'required|exists:users,id',  // Opsional
+            'user_id' => 'nullable|exists:users,id',  // Opsional
             'room_id' => 'required|exists:rooms,id',
             'nama_siswa' => 'required|string|max:255', // Input manual// Otomatis diisi dengan akun login
             'guru_pembimbing' => 'required|string|max:255', // Input manual
             'kasus' => 'required|string|max:255',
             'tanggal' => 'required|date',
             'catatan_guru' => 'required|string',
-            'poin' => 'required|integer|in:10,20,30,40,50,60,70,80,90,100',
+            'poin' => 'required|integer|min:1|max:150',
         ]);
 
         Catatan::create([
-            'user_id' => $request->user_id, // Opsional
+            'user_id' => $request->user_id ?: null, // Opsional
             'room_id' => $request->room_id,
             'guru_id' => Auth::id(), // Otomatis diisi dengan akun login
             'nama_siswa' => $request->nama_siswa,
@@ -97,14 +97,24 @@ class CatatanController extends Controller
             'kasus' => 'required|string|max:255',
             'tanggal' => 'required|date',
             'catatan_guru' => 'required|string',
-            'poin' => 'required|integer|in:10,20,30,40,50,60,70,80,90,100',
+            'poin' => 'required|integer|min:1|max:150',
         ]);
 
-        $catatan->update($request->all());
+        // Perbarui data catatan
+        $catatan->update([
+            'user_id' => $request->user_id,
+            'room_id' => $request->room_id,
+            'guru_id' => Auth::id(),
+            'nama_siswa' => $request->nama_siswa,
+            'guru_pembimbing' => $request->guru_pembimbing,
+            'kasus' => $request->kasus,
+            'tanggal' => $request->tanggal,
+            'catatan_guru' => $request->catatan_guru,
+            'poin' => $request->poin,
+        ]);
 
         return redirect()->route('catatans.index')->with('success', 'Catatan berhasil diperbarui.');
     }
-
     public function destroy(Catatan $catatan)
     {
         if (Auth::user()->role !== UserRole::Teacher) {
@@ -115,15 +125,11 @@ class CatatanController extends Controller
 
         return redirect()->route('catatans.index')->with('success', 'Catatan berhasil dihapus.');
     }
-    public function showDownloadByUser()
-    {
-        // Ambil semua siswa (role User)
-        $students = User::where('role', UserRole::User)->get();
-
-        return view('catatans.download-by-user', compact('students'));
-    }
     public function downloadAll()
     {
+        if (Auth::user()->role !== UserRole::Teacher) {
+            abort(403, 'Unauthorized action.');
+        }
         abort_unless(Auth::user()->role === UserRole::Teacher, 403);
         $fileName = 'catatan_semua_' . now()->format('Ymd_His') . '.xlsx';
         return Excel::download(
@@ -134,6 +140,10 @@ class CatatanController extends Controller
 
     public function downloadByUser(Request $request)
     {
+        if (Auth::user()->role !== UserRole::Teacher) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $request->validate([
             'nama_siswa' => 'required|exists:users,id', // Validasi menggunakan user_id
         ]);
@@ -151,6 +161,9 @@ class CatatanController extends Controller
 
     public function show(Catatan $catatan)
     {
+        if (Auth::user()->role !== UserRole::Teacher) {
+            abort(403, 'Unauthorized action.');
+        }
         return view('catatans.show', compact('catatan'));
     }
 }

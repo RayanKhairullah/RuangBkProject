@@ -3,74 +3,131 @@
 namespace App\Exports;
 
 use App\Models\Biodata;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Illuminate\Database\Eloquent\Builder;
+use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Carbon\Carbon;
 
-class BiodataExport implements FromCollection, WithHeadings, WithMapping, WithStyles
+class BiodataExport implements FromQuery, WithHeadings, WithMapping, WithStyles
 {
-    protected $user;
-
-    public function __construct($user)
+    /**
+     * Query to fetch all biodata with related user, jurusan, and room.
+     *
+     * @return Builder
+     */
+    public function query(): Builder
     {
-        $this->user = $user;
+        return Biodata::with(['user', 'jurusan', 'room']);
     }
 
-    public function collection()
-    {
-        // Return a collection of one row
-        return collect([$this->user->biodata]);
-    }
-
+    /**
+     * Define the headings for all biodata columns.
+     *
+     * @return array
+     */
     public function headings(): array
     {
         return [
+            'ID',
+            'User ID',
+            'Nama Siswa',
             'NISN',
-            'Name',
-            'Email',
+            'Jenis Kelamin',
             'Jurusan',
-            'Room',
+            'Kode Kelas',
+            'Tingkatan Kelas',
+            'Tempat Lahir',
+            'Tanggal Lahir',
             'Telepon',
             'Agama',
-            'Alamat',
-            'Tanggal Lahir',
+            'Alamat KTP',
+            'Alamat Domisili',
+            'Cita Cita',
+            'Hobi',
+            'Minat Bakat',
+            'SD',
+            'SMP',
+            'Nama Ayah',
+            'Pekerjaan Ayah',
+            'No HP Ayah',
+            'Nama Ibu',
+            'Pekerjaan Ibu',
+            'No HP Ibu',
             'Golongan Darah',
             'Status',
+            'Image Path',
+            'Created At',
+            'Updated At',
         ];
     }
 
-    public function map($biodata): array
+    /**
+     * Map each biodata record to an exportable row.
+     *
+     * @param  \App\Models\Biodata  $b
+     * @return array
+     */
+    public function map($b): array
     {
         return [
-            $biodata->nisn,
-            $biodata->user->name,
-            $biodata->user->email,
-            $biodata->jurusan->nama_jurusan,
-            $biodata->rooms->tingkatan_rooms,
-            $biodata->telepon,
-            $biodata->agama,
-            $biodata->alamat,
-            $biodata->tanggal_lahir instanceof \Carbon\Carbon
-                ? $biodata->tanggal_lahir->format('Y-m-d')
-                : $biodata->tanggal_lahir,
-            $biodata->gol_darah,
-            $biodata->status,
+            $b->id,
+            $b->user_id,
+            $b->nama_siswa,
+            $b->nisn,
+            $b->jenis_kelamin,
+            optional($b->jurusan)->nama_jurusan,
+            optional($b->room)->kode_rooms,
+            optional($b->room)->tingkatan_rooms,
+            $b->tempat_lahir,
+            $b->tanggal_lahir instanceof Carbon
+                ? $b->tanggal_lahir->format('Y-m-d')
+                : $b->tanggal_lahir,
+            $b->telepon,
+            $b->agama,
+            $b->alamat_ktp,
+            $b->alamat_domisili,
+            $b->cita_cita,
+            $b->hobi,
+            $b->minat_bakat,
+            $b->sd,
+            $b->smp,
+            $b->nama_ayah,
+            $b->pekerjaan_ayah,
+            $b->no_hp_ayah,
+            $b->nama_ibu,
+            $b->pekerjaan_ibu,
+            $b->no_hp_ibu,
+            $b->gol_darah,
+            $b->status,
+            $b->image,
+            $b->created_at->format('Y-m-d H:i:s'),
+            $b->updated_at->format('Y-m-d H:i:s'),
         ];
     }
 
+    /**
+     * Apply styles to the sheet: bold headers, autosize, thin borders.
+     *
+     * @param  Worksheet  $sheet
+     * @return void
+     */
     public function styles(Worksheet $sheet)
     {
-        // Bold headings
-        $sheet->getStyle('A1:K1')->getFont()->setBold(true);
+        // Bold header row
+        $sheet->getStyle('A1:AB1')->getFont()->setBold(true);
 
-        // Autosize columns
-        foreach (range('A', 'K') as $col) {
+        // Autosize columns A through AB
+        foreach (range('A', 'Z') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+        foreach (['AA', 'AB'] as $col) {
             $sheet->getColumnDimension($col)->setAutoSize(true);
         }
 
-        // Set border for all cells
+        // Thin borders for all cells
         $highestRow = $sheet->getHighestRow();
         $highestCol = $sheet->getHighestColumn();
         $sheet->getStyle("A1:{$highestCol}{$highestRow}")

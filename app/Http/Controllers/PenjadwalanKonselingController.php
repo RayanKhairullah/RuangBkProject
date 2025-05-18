@@ -18,7 +18,7 @@ class PenjadwalanKonselingController extends Controller
         $jadwals = PenjadwalanKonseling::with(['pengirim', 'penerima'])
             ->where('pengirim_id', Auth::id())
             ->orWhere('penerima_id', Auth::id())
-            ->get();
+            ->paginate(5);
 
         return view('penjadwalan.index', compact('jadwals'));
     }
@@ -127,6 +127,9 @@ class PenjadwalanKonselingController extends Controller
 
     public function downloadAll()
     {
+        if (Auth::user()->role !== UserRole::Teacher) {
+            abort(403, 'Unauthorized action.');
+        }
         $fileName = 'penjadwalan_konseling_' . now()->format('Ymd_His') . '.xlsx';
         return Excel::download(new PenjadwalanKonselingExport(), $fileName);
     }

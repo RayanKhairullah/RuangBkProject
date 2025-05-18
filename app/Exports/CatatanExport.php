@@ -36,12 +36,15 @@ class CatatanExport implements FromCollection, WithHeadings, WithMapping, WithSt
     public function headings(): array
     {
         return [
+            'Email Siswa',
             'Nama Siswa',
+            'Kode Kelas',
             'Jurusan',
             'Tingkatan Kelas',
             'Kasus',
             'Tanggal',
-            'Nama Guru',
+            'Email Guru',
+            'Guru Pembimbing',
             'Catatan Guru',
             'Poin',
         ];
@@ -50,17 +53,20 @@ class CatatanExport implements FromCollection, WithHeadings, WithMapping, WithSt
     public function map($catatan): array
     {
         return [
-            $catatan->user->name,
+            $catatan->user->email ?? '-',
+            $catatan->nama_siswa,
+            $catatan->room->kode_rooms,
             $catatan->room->jurusan->nama_jurusan,
             $catatan->room->tingkatan_rooms,
             $catatan->kasus,
             $catatan->tanggal instanceof \Carbon\Carbon
                 ? $catatan->tanggal->format('Y-m-d')
                 : $catatan->tanggal,
-            $catatan->guru->name,
+            $catatan->guru->email ?? '-',
+            $catatan->guru_pembimbing,
             $catatan->catatan_guru,
             $catatan->poin,
-        ];
+        ];  
     }
 
     public function styles(Worksheet $sheet)
