@@ -6,9 +6,9 @@
     </div>
 
     <div class="overflow-x-auto">
-        <table class="table-auto w-full border-collapse border border-gray-300 text-black">
+        <table class="table-auto w-full border-collapse border border-gray-300">
             <thead>
-                <tr class="bg-gray-200">
+                <tr class="bg-black-200">
                     <th class="border px-2 py-1">ID</th>
                     <th class="border px-2 py-1">Nama Siswa</th>
                     <th class="border px-2 py-1">{{ __('Jurusan') }}</th>

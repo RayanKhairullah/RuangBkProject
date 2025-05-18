@@ -11,14 +11,42 @@ use APp\Enums\UserRole;
 
 class RoomController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        // Hanya guru yang boleh mengakses
         if (Auth::user()->role !== UserRole::Teacher) {
             abort(403, 'Unauthorized action.');
         }
-        $rooms = Room::with('jurusan')->paginate(10); // Gunakan paginate langsung tanpa get()
-        return view('rooms.index', compact('rooms'));
+
+        // Daftar filter yang diperbolehkan beserta callback-nya
+        $allowedFilters = [
+            'jurusan'       => fn($query, $value) => $query->where('jurusan_id', $value),
+            'kode_rooms'    => fn($query, $value) => $query->where('kode_rooms', 'like', "%{$value}%"),
+            'tingkatan'     => fn($query, $value) => $query->where('tingkatan_rooms', 'like', "%{$value}%"),
+        ];
+
+        // Query dasar: relasi jurusan + pagination nanti
+        $query = Room::with('jurusan');
+
+        // Apply semua filter yang ada di request
+        foreach ($request->only(array_keys($allowedFilters)) as $filter => $value) {
+            if ($value !== null && $value !== '') {
+                $query = $allowedFilters[$filter]($query, $value);
+            }
+        }
+
+        // Urut, paginate, dan retain query string
+        $rooms = $query
+            ->orderBy('id', 'desc')
+            ->paginate(10)
+            ->withQueryString();
+
+        // Untuk dropdown jurusan di form
+        $jurusans = Jurusan::all();
+
+        return view('rooms.index', compact('rooms', 'jurusans'));
     }
+
 
     public function create()
     {

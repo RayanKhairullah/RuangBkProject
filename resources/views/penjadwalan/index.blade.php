@@ -9,6 +9,57 @@
         <a href="{{ route('penjadwalan.download') }}" class="btn btn-primary mb-4">{{ __('Download Semua Jadwal') }}</a>
     @endif
 
+    <form method="GET" action="{{ route('penjadwalan.index') }}" class="mb-4 flex flex-wrap gap-3 items-end">
+        {{-- Penerima (Guru) --}}
+        <div>
+            <label class="block text-sm">Guru Penerima</label>
+            <select name="penerima" class="px-3 py-1 border rounded">
+                <option value="">{{ __('Semua Guru') }}</option>
+                @foreach(\App\Models\User::where('role', App\Enums\UserRole::Teacher)->get() as $guru)
+                    <option value="{{ $guru->id }}" @selected(request('penerima') == $guru->id)>
+                        {{ $guru->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        {{-- Lokasi --}}
+        <div>
+            <label class="block text-sm">Lokasi</label>
+            <input type="text" name="lokasi" value="{{ request('lokasi') }}"
+                   placeholder="Cari Lokasi…" class="px-3 py-1 border rounded" />
+        </div>
+
+        {{-- Tanggal --}}
+        <div>
+            <label class="block text-sm">Tanggal</label>
+            <input type="date" name="tanggal" value="{{ request('tanggal') }}"
+                   class="px-3 py-1 border rounded" />
+        </div>
+
+        {{-- Status (hanya guru) --}}
+        @if(auth()->user()->role === App\Enums\UserRole::Teacher)
+        <div>
+            <label class="block text-sm">Status</label>
+            <select name="status" class="px-3 py-1 border rounded">
+                <option value="">{{ __('Semua Status') }}</option>
+                <option value="Complete" @selected(request('status')==='Complete')>Complete</option>
+                <option value="Incomplete" @selected(request('status')==='Incomplete')>Incomplete</option>
+            </select>
+        </div>
+        @endif
+
+        <div class="flex gap-2">
+            <button type="submit" class="bg-blue-600 text-white px-4 py-1 rounded">
+                {{ __('Filter') }}
+            </button>
+            <a href="{{ route('penjadwalan.index') }}"
+               class="px-4 py-1 border rounded text-gray-600">
+               {{ __('Reset') }}
+            </a>
+        </div>
+    </form>
+    
     <div class="overflow-x-auto">
         <table class="table-auto w-full border-collapse border border-gray-300">
             <thead>

@@ -13,12 +13,33 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class PenjadwalanKonselingController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $jadwals = PenjadwalanKonseling::with(['pengirim', 'penerima'])
+        // Hanya pengirim atau penerima
+        $baseQuery = PenjadwalanKonseling::with(['pengirim', 'penerima'])
             ->where('pengirim_id', Auth::id())
-            ->orWhere('penerima_id', Auth::id())
-            ->paginate(5);
+            ->orWhere('penerima_id', Auth::id());
+
+        // Daftar filter yang diperbolehkan
+        $allowedFilters = [
+            'penerima'   => fn($q, $v) => $q->where('penerima_id', $v),
+            'lokasi'     => fn($q, $v) => $q->where('lokasi', 'like', "%{$v}%"),
+            'tanggal'    => fn($q, $v) => $q->whereDate('tanggal', $v),
+            'status'     => fn($q, $v) => $q->where('status', $v),  // hanya untuk guru
+        ];
+
+        // Apply setiap filter yang ada di query string
+        foreach ($request->only(array_keys($allowedFilters)) as $filter => $value) {
+            if ($value !== null && $value !== '') {
+                $baseQuery = $allowedFilters[$filter]($baseQuery, $value);
+            }
+        }
+
+        // Paginate dan retain query string
+        $jadwals = $baseQuery
+            ->orderBy('tanggal', 'desc')
+            ->paginate(5)
+            ->withQueryString();
 
         return view('penjadwalan.index', compact('jadwals'));
     }

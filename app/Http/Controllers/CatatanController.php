@@ -13,19 +13,42 @@ use App\Enums\UserRole;
 
 class CatatanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         if (Auth::user()->role === UserRole::Teacher) {
-            $catatans = Catatan::with(['user', 'room', 'guru'])->paginate(5);
-            $students = User::where('role', UserRole::User)->get(); // Ambil semua siswa
+            $baseQuery = Catatan::with(['user','room','guru']);
         } else {
-            $catatans = Catatan::with(['user', 'room', 'guru'])
-                ->where('user_id', Auth::id())
-                ->paginate(5); // Gunakan paginate untuk konsistensi
-            $students = [];
+            $baseQuery = Catatan::with(['user','room','guru'])
+                ->where('user_id', Auth::id());
         }
-            
-        return view('catatans.index', compact('catatans', 'students'));
+
+        // Filter yang diperbolehkan
+        $allowedFilters = [
+            'siswa'      => fn($q,$v) => $q->where('user_id', $v),
+            'room'       => fn($q,$v) => $q->where('room_id', $v),
+            'tanggal'    => fn($q,$v) => $q->whereDate('tanggal', $v),
+            'poin_min'   => fn($q,$v) => $q->where('poin', '>=', $v),
+            'poin_max'   => fn($q,$v) => $q->where('poin', '<=', $v),
+        ];
+
+        foreach ($request->only(array_keys($allowedFilters)) as $filter=>$value) {
+            if ($value !== null && $value !== '') {
+                $baseQuery = $allowedFilters[$filter]($baseQuery, $value);
+            }
+        }
+
+        $catatans = $baseQuery
+            ->orderBy('tanggal','desc')
+            ->paginate(5)
+            ->withQueryString();
+
+        $students = Auth::user()->role === UserRole::Teacher
+            ? User::where('role', UserRole::User)->get()
+            : [];
+
+        $rooms    = Room::all();
+
+        return view('catatans.index', compact('catatans','students','rooms'));
     }
 
     public function create()

@@ -2,6 +2,65 @@
     <h1 class="text-2xl font-bold mb-4">{{ __('Catatan Siswa') }}</h1>
 
     @if(auth()->user()->role === App\Enums\UserRole::Teacher)
+    <form method="GET" action="{{ route('catatans.index') }}" class="mb-4 flex flex-wrap gap-3 items-end">
+        {{-- Siswa --}}
+        <div>
+            <label class="block text-sm">Siswa</label>
+            <select name="siswa" class="px-3 py-1 border rounded">
+                <option value="">{{ __('Semua Siswa') }}</option>
+                @foreach($students as $s)
+                    <option value="{{ $s->id }}" @selected(request('siswa') == $s->id)>
+                        {{ $s->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        {{-- Room --}}
+        <div>
+            <label class="block text-sm">Room</label>
+            <select name="room" class="px-3 py-1 border rounded">
+                <option value="">{{ __('Semua Kelas') }}</option>
+                @foreach($rooms as $r)
+                    <option value="{{ $r->id }}" @selected(request('room') == $r->id)>
+                        {{ $r->kode_rooms }} - {{ $r->jurusan->nama_jurusan }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        {{-- Tanggal --}}
+        <div>
+            <label class="block text-sm">Tanggal</label>
+            <input type="date" name="tanggal" value="{{ request('tanggal') }}"
+                   class="px-3 py-1 border rounded" />
+        </div>
+
+        {{-- Poin --}}
+        <div>
+            <label class="block text-sm">Poin Min</label>
+            <input type="number" name="poin_min" value="{{ request('poin_min') }}"
+                   class="px-3 py-1 border rounded w-20" />
+        </div>
+        <div>
+            <label class="block text-sm">Poin Max</label>
+            <input type="number" name="poin_max" value="{{ request('poin_max') }}"
+                   class="px-3 py-1 border rounded w-20" />
+        </div>
+
+        <div class="flex gap-2">
+            <button type="submit" class="bg-blue-600 text-white px-4 py-1 rounded">
+                {{ __('Filter') }}
+            </button>
+            <a href="{{ route('catatans.index') }}"
+               class="px-4 py-1 border rounded text-gray-600">
+               {{ __('Reset') }}
+            </a>
+        </div>
+    </form>
+    @endif
+
+    @if(auth()->user()->role === App\Enums\UserRole::Teacher)
         <a href="{{ route('catatans.create') }}" class="btn btn-primary mb-4">{{ __('Buat Catatan') }}</a>
         <a href="{{ route('catatans.downloadAll') }}" class="btn btn-success mb-4">{{ __('Download Semua Catatan') }}</a>
 
