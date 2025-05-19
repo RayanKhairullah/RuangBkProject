@@ -66,7 +66,7 @@
                 {{ __('Repository') }}
                 </flux:navlist.item> --}}
 
-                <flux:navlist.item icon="book-open-text" href="https://laravel.com/docs/starter-kits" target="_blank">
+                <flux:navlist.item icon="book-open-text" href="https://github.com/RayanKhairullah/ruangbk-project" target="_blank">
                 {{ __('Documentation') }}
                 </flux:navlist.item>
             </flux:navlist>

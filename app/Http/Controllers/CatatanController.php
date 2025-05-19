@@ -113,8 +113,7 @@ class CatatanController extends Controller
 
         $request->validate([
             'user_id' => 'nullable|exists:users,id', // Opsional
-            'room_id' => 'required|exists:rooms,id',
-            'guru_id' => 'required|exists:users,id', // Otomatis diisi dengan akun login            
+            'room_id' => 'required|exists:rooms,id',           
             'nama_siswa' => 'required|string|max:255', // Input manual
             'guru_pembimbing' => 'required|string|max:255', // Input manual
             'kasus' => 'required|string|max:255',

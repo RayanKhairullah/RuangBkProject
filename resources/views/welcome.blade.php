@@ -7,6 +7,7 @@
     <title>RuangBk</title>
     @vite(['resources/css/app.css'])
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+    <link rel="icon" href="{{ asset('images/logoKonselor.png') }}">
 </head>
 <body class="bg-white">
     <header class="top-0 mx-auto flex justify-between items-center p-6 bg-white">

@@ -1,47 +1,7 @@
 <x-layouts.app :title="__('Dashboard Siswa')">
   <div class="container mx-auto px-4">
-    {{-- MOBILE SIDEBAR --}}
-    <div id="sidebar" class="fixed inset-y-0 right-0 w-64 bg-white transform translate-x-full transition-transform md:hidden z-40">
-      <div class="p-6 flex justify-between items-center">
-        <h2 class="font-bold text-lg">{{ __('Menu') }}</h2>
-        <button onclick="toggleSidebar()">
-          <!-- your back arrow SVG -->
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
-               viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M6 18L18 6M6 6l12 12"/>
-          </svg>
-        </button>
-      </div>
-      <div class="p-6">
-        <ul class="space-y-1">
-          <li>
-            <a href="#home" onclick="toggleSidebar()" class="block font-bold hover:text-black">
-              {{ __('Home') }}
-            </a>
-          </li>
-          <li>
-            <a href="#riwayat-pelanggaran" onclick="toggleSidebar()" class="block font-bold hover:text-black">
-              {{ __('Pelanggaran') }}
-            </a>
-          </li>
-          <li>
-            <a href="#structure" onclick="toggleSidebar()" class="block font-bold hover:text-black">
-              {{ __('Structure') }}
-            </a>
-          </li>
-          <li>
-            <a href="{{ route('biodatas.show') }}" onclick="toggleSidebar()" class="block font-bold hover:text-black">
-              {{ __('Biodata') }}
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
-    <div id="overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden" onclick="toggleSidebar()"></div>
-
     {{-- MAIN CONTENT --}}
-    <div class="pt-16 pb-8">
+    <div class="pb-16">
       {{-- Section HOME --}}
       <section id="home" class="grid grid-cols-1 md:grid-cols-2 items-center gap-8">
         <div class="space-y-6">
@@ -49,7 +9,7 @@
           <h1 class="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-blue-800 via-yellow-400 to-orange-500 bg-clip-text text-transparent">
             Selamat Datang<br>Di RuangBk!
           </h1>
-          <a href="#" class="inline-block px-6 py-3 border-2 rounded-lg bg-gradient-to-r from-blue-800 to-yellow-400 text-white hover:scale-105 transition">
+          <a href="{{ route('penjadwalan.index') }}" class="inline-block px-6 py-3 border-2 rounded-lg bg-gradient-to-r from-blue-800 to-yellow-400 text-white hover:scale-105 transition">
             {{ __('Konseling') }}
           </a>
         </div>
@@ -57,6 +17,25 @@
           <img src="{{ asset('images/garfisSide.png') }}" alt="Graphic" class="w-full h-auto rounded-lg shadow">
         </div>
       </section>
+
+      {{-- Pop-up for Biodata --}}
+      @if (!auth()->user()->biodata) {{-- Kondisi jika biodata belum diisi --}}
+          <div x-data="{ open: false }" x-init="setTimeout(() => open = true, 3000)" x-show="open" class="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm">
+              <!-- Pop-up Content -->
+              <div x-show="open" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-90" class="relative bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-md w-full">
+                  <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{{ __('Isi Biodata Anda') }}</h2>
+                  <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">{{ __('Anda harus mengisi biodata terlebih dahulu sebelum melanjutkan.') }}</p>
+                  <div class="flex justify-end space-x-4">
+                      <a href="{{ route('biodatas.edit') }}" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-md">
+                          {{ __('Isi Biodata') }}
+                      </a>
+                      <button @click="open = false" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg shadow-md">
+                          {{ __('Nanti') }}
+                      </button>
+                  </div>
+              </div>
+          </div>
+      @endif
 
     {{-- Section RIWAYAT PELANGGARAN --}}
     <section id="riwayat-pelanggaran" class="py-12">
@@ -85,17 +64,17 @@
     </section>
 
       {{-- Section STRUCTURE --}}
-      <section id="structure" class="text-center py-12">
-        <h2 class="text-2xl sm:text-3xl font-bold">{{ __('Mekanisme Penanganan Kasus') }}</h2>
-        <h2 class="text-2xl sm:text-3xl font-bold">{{ __('di SMKN 1 KOTA BENGKULU') }}</h2>
+      <section id="structure" class="text-center py-12 pt-16">
+        <h2 class="text-2xl sm:text-3xl font-bold uppercase">{{ __('Mekanisme Penanganan Kasus BK') }}</h2>
+        <h2 class="text-2xl sm:text-3xl font-bold">{{ __('SMKN 1 KOTA BENGKULU') }}</h2>
         <div class="mt-8">
-          <img src="{{ asset('images/structure1.jpg') }}" alt="Alur Kasus" class="mx-auto w-full max-w-lg rounded-lg shadow">
+          <img src="{{ asset('images/structure1.png') }}" alt="Alur Kasus" class="mx-auto w-500 rounded-lg shadow">
         </div>
       </section>
     </div>
 
     {{-- FOOTER --}}
-    <footer class="bg-white py-6">
+    <footer class="py-6">
       <div class="container mx-auto px-4 text-center">
         <ul class="flex flex-wrap justify-center space-x-6 font-bold mb-4">
           <li><a href="#home" class="hover:underline">{{ __('Home') }}</a></li>
@@ -107,15 +86,4 @@
       </div>
     </footer>
   </div>
-
-  @push('scripts')
-  <script>
-    function toggleSidebar() {
-      const sb = document.getElementById('sidebar');
-      const ov = document.getElementById('overlay');
-      sb.classList.toggle('translate-x-full');
-      ov.classList.toggle('hidden');
-    }
-  </script>
-  @endpush
 </x-layouts.app>

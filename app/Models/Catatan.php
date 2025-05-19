@@ -21,6 +21,10 @@ class Catatan extends Model
         'poin',
     ];
 
+    protected $casts = [
+        'tanggal' => 'date',  // now $catatan->tanggal is always Carbon
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
