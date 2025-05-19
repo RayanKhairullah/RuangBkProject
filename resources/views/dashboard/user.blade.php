@@ -1,59 +1,121 @@
-<x-layouts.app :title="__('User Dashboard')">
-    <div class="relative mb-6 w-full">
-        <flux:heading size="xl" level="1" class="text-gray-800 dark:text-gray-100">{{ __('User Dashboard') }}</flux:heading>
-        <flux:subheading size="lg" class="mb-6 text-gray-600 dark:text-gray-300">{{ __('Welcome to your dashboard! Here you can manage your data and access various features.') }}</flux:subheading>
-        <flux:separator variant="subtle" />
+<x-layouts.app :title="__('Dashboard Siswa')">
+  <div class="container mx-auto px-4">
+    {{-- MOBILE SIDEBAR --}}
+    <div id="sidebar" class="fixed inset-y-0 right-0 w-64 bg-white transform translate-x-full transition-transform md:hidden z-40">
+      <div class="p-6 flex justify-between items-center">
+        <h2 class="font-bold text-lg">{{ __('Menu') }}</h2>
+        <button onclick="toggleSidebar()">
+          <!-- your back arrow SVG -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="p-6">
+        <ul class="space-y-1">
+          <li>
+            <a href="#home" onclick="toggleSidebar()" class="block font-bold hover:text-black">
+              {{ __('Home') }}
+            </a>
+          </li>
+          <li>
+            <a href="#riwayat-pelanggaran" onclick="toggleSidebar()" class="block font-bold hover:text-black">
+              {{ __('Pelanggaran') }}
+            </a>
+          </li>
+          <li>
+            <a href="#structure" onclick="toggleSidebar()" class="block font-bold hover:text-black">
+              {{ __('Structure') }}
+            </a>
+          </li>
+          <li>
+            <a href="{{ route('biodatas.show') }}" onclick="toggleSidebar()" class="block font-bold hover:text-black">
+              {{ __('Biodata') }}
+            </a>
+          </li>
+        </ul>
+      </div>
     </div>
+    <div id="overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden" onclick="toggleSidebar()"></div>
 
-    {{-- Pop-up for Biodata --}}
-    @if (!$user->biodata_filled) {{-- Kondisi jika biodata belum diisi --}}
-        <div x-data="{ open: false }" x-init="setTimeout(() => open = true, 3000)" x-show="open" class="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm">
-            <!-- Pop-up Content -->
-            <div x-show="open" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-90" class="relative bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-md w-full">
-                <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{{ __('Isi Biodata Anda') }}</h2>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">{{ __('Anda harus mengisi biodata terlebih dahulu sebelum melanjutkan.') }}</p>
-                <div class="flex justify-end space-x-4">
-                    <a href="{{ route('biodatas.edit') }}" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-md">
-                        {{ __('Isi Biodata') }}
-                    </a>
-                    <button @click="open = false" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg shadow-md">
-                        {{ __('Nanti') }}
-                    </button>
-                </div>
-            </div>
+    {{-- MAIN CONTENT --}}
+    <div class="pt-16 pb-8">
+      {{-- Section HOME --}}
+      <section id="home" class="grid grid-cols-1 md:grid-cols-2 items-center gap-8">
+        <div class="space-y-6">
+          <p class="text-3xl font-bold">Hi, {{ auth()->user()->name }}!</p>
+          <h1 class="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-blue-800 via-yellow-400 to-orange-500 bg-clip-text text-transparent">
+            Selamat Datang<br>Di RuangBk!
+          </h1>
+          <a href="#" class="inline-block px-6 py-3 border-2 rounded-lg bg-gradient-to-r from-blue-800 to-yellow-400 text-white hover:scale-105 transition">
+            {{ __('Konseling') }}
+          </a>
         </div>
-    @endif
+        <div>
+          <img src="{{ asset('images/garfisSide.png') }}" alt="Graphic" class="w-full h-auto rounded-lg shadow">
+        </div>
+      </section>
 
-    {{-- Account Info --}}
-    <div class="p-4 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-lg shadow">
-        <h2 class="text-lg font-semibold mb-2">{{ __('Welcome') }} <strong>{{ auth()->user()->name }}</strong></h2>
-        <p>{{ __('Role:') }} <strong>{{ ucfirst($user->role->value) }}</strong></p>
-        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">{{ __('This section shows your account information, including your name and role.') }}</p>
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button type="submit" class="px-4 py-2 bg-red-500 dark:bg-red-600 text-white rounded hover:bg-red-600">{{ __('Sign Out') }}</button>
-        </form>
+    {{-- Section RIWAYAT PELANGGARAN --}}
+    <section id="riwayat-pelanggaran" class="py-12">
+    <form method="GET" action="{{ route('dashboard') }}" class="max-w-md mx-auto mb-6">
+        <div class="relative">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+            <!-- search icon SVG -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M8 16l-4-4m0 0l4-4m-4 4h18"/>
+            </svg>
+        </span>
+        <input
+            type="text"
+            name="search"
+            value="{{ request('search') }}"
+            placeholder="{{ __('Cari Kasus') }}"
+            class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+        />
+        </div>
+    </form>
+
+    {{-- Tabel Catatan --}}
+    @include('partials.catatan-table')
+    </section>
+
+      {{-- Section STRUCTURE --}}
+      <section id="structure" class="text-center py-12">
+        <h2 class="text-2xl sm:text-3xl font-bold">{{ __('Mekanisme Penanganan Kasus') }}</h2>
+        <h2 class="text-2xl sm:text-3xl font-bold">{{ __('di SMKN 1 KOTA BENGKULU') }}</h2>
+        <div class="mt-8">
+          <img src="{{ asset('images/structure1.jpg') }}" alt="Alur Kasus" class="mx-auto w-full max-w-lg rounded-lg shadow">
+        </div>
+      </section>
     </div>
 
-    {{-- Biodata Section --}}
-    <div class="p-4 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-lg shadow mt-6">
-        <h2 class="text-lg font-semibold mb-2">{{ __('Biodata') }}</h2>
-        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">{{ __('Mengedit Biodata Anda') }}</p>
-        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">{{ __('Silahkan isi biodata Anda dengan benar dan lengkap.') }}</p>
-        <a href="{{ route('biodatas.edit') }}" class="px-4 py-2 bg-blue-500 dark:bg-blue-600 text-white rounded hover:bg-blue-600">{{ __('Edit Biodata') }}</a>
-    </div>
+    {{-- FOOTER --}}
+    <footer class="bg-white py-6">
+      <div class="container mx-auto px-4 text-center">
+        <ul class="flex flex-wrap justify-center space-x-6 font-bold mb-4">
+          <li><a href="#home" class="hover:underline">{{ __('Home') }}</a></li>
+          <li><a href="#riwayat-pelanggaran" class="hover:underline">{{ __('Riwayat Pelanggaran') }}</a></li>
+          <li><a href="#structure" class="hover:underline">{{ __('Structure') }}</a></li>
+        </ul>
+        <hr class="my-4">
+        <p class="text-sm">&copy; 2024 All rights reserved ‖ By Veritas Group</p>
+      </div>
+    </footer>
+  </div>
 
-    {{-- Catatan Section --}}
-    <div class="p-4 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-lg shadow mt-6">
-        <h2 class="text-lg font-semibold mb-2">{{ __('Catatan Prilaku') }}</h2>
-        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">{{ __('melihat catatan perilaku yang telah dibuat oleh guru BK.') }}</p>
-        <a href="{{ route('catatans.index') }}" class="px-4 py-2 bg-blue-500 dark:bg-blue-600 text-white rounded hover:bg-blue-600">{{ __('View Catatan') }}</a>
-    </div>
-
-    {{-- Penjadwalan Konseling Section --}}
-    <div class="p-4 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-lg shadow mt-6">
-        <h2 class="text-lg font-semibold mb-2">{{ __('Penjadwalan Konseling') }}</h2>
-        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">{{ __('Untuk Mengatur jadwal konseling dengan guru BK.') }}</p>
-        <a href="{{ route('penjadwalan.index') }}" class="px-4 py-2 bg-blue-500 dark:bg-blue-600 text-white rounded hover:bg-blue-600">{{ __('View Jadwal') }}</a>
-    </div>
+  @push('scripts')
+  <script>
+    function toggleSidebar() {
+      const sb = document.getElementById('sidebar');
+      const ov = document.getElementById('overlay');
+      sb.classList.toggle('translate-x-full');
+      ov.classList.toggle('hidden');
+    }
+  </script>
+  @endpush
 </x-layouts.app>

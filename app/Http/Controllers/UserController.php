@@ -7,6 +7,8 @@ use App\Exports\BiodataExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Auth;
 use App\Enums\UserRole;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Str;
 
 
 class UserController extends Controller

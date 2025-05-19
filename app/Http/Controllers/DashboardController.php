@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\SuratPanggilan;
+use App\Models\Catatan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
 
@@ -47,9 +49,26 @@ class DashboardController extends Controller
             ]);
         }
 
-        // Jika role adalah user
+        // Query dasar catatan user
+        $query = Catatan::with(['room.jurusan', 'guru'])
+            ->where('user_id', $user->id);
+
+        // Jika ada parameter pencarian, filter berdasarkan kolom 'kasus'
+        if ($search = $request->query('search')) {
+            $query->where(function($q) use ($search) {
+                $q->where('kasus', 'like', "%{$search}%")
+                ->orWhere('catatan_guru', 'like', "%{$search}%");
+            });
+        }
+
+        $catatans = $query
+            ->orderBy('tanggal', 'desc')
+            ->paginate(5)
+            ->withQueryString();  // pertahankan ?search di pagination
+
         return view('dashboard.user', [
-            'user' => $user,
+            'user'     => $user,
+            'catatans' => $catatans,
         ]);
     }
 }

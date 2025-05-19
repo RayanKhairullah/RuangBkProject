@@ -134,7 +134,7 @@ class SuratPanggilanController extends Controller
         $surat = SuratPanggilan::with('room.jurusan')->findOrFail($id);
 
         // Data tambahan untuk header/footer
-        $nama_kepala_sekolah   = 'Drs. Ahmad Fauzi';         // sesuaikan
+        $nama_kepala_sekolah   = 'Drs. Ismael Harahap';         // sesuaikan
         $jabatan_kepala_sekolah = 'Kepala Sekolah';        // sesuaikan
 
         // Render view menjadi PDF

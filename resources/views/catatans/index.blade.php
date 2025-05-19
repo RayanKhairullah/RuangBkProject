@@ -18,7 +18,7 @@
 
         {{-- Room --}}
         <div>
-            <label class="block text-sm">Room</label>
+            <label class="block text-sm">Kode Kelas</label>
             <select name="room" class="px-3 py-1 border rounded">
                 <option value="">{{ __('Semua Kelas') }}</option>
                 @foreach($rooms as $r)

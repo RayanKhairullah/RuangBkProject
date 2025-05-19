@@ -30,7 +30,7 @@
 
         <div class="mb-4">
             <label for="nomor_surat" class="block text-sm font-medium text-gray-700">{{ __('Nomor Surat') }}</label>
-            <input type="text" name="nomor_surat" id="nomor_surat" class="form-input w-full" value="{{ old('nomor_surat') }}" required>
+            <input type="text" name="nomor_surat" id="nomor_surat" class="form-input w-full" value="{{ old('nomor_surat') }}" required placeholder="XI">
             @error('nomor_surat') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
         </div>
 
@@ -48,7 +48,12 @@
 
         <div class="mb-4">
             <label for="tujuan" class="block text-sm font-medium text-gray-700">{{ __('Tujuan') }}</label>
-            <textarea name="tujuan" id="tujuan" class="form-input w-full" rows="3" required>{{ old('tujuan') }}</textarea>
+            <textarea name="tujuan" id="tujuan" class="form-input w-full" rows="3" required 
+            placeholder="contoh:
+            1.abcd
+            2.abcd
+            3.abcd"
+            >{{ old('tujuan') }}</textarea>
             @error('tujuan') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
         </div>
 
