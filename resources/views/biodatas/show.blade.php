@@ -11,7 +11,7 @@
           <h1 class="text-2xl md:text-3xl text-black mb-4 md:mb-0">{{ __('My Biodata') }}</h1>
           <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
             <a href="{{ route('biodatas.edit', $biodata->id) }}"
-               class="w-full sm:w-auto text-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
+               class="w-full sm:w-auto text-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition">
               {{ __('Edit Biodata') }}
             </a>
           </div>
@@ -24,7 +24,7 @@
               <div class="font-normal">{{ __('NISN') }}</div>
               <div class="font-light">:</div>
               <div class="font-normal">{{ $biodata->nisn }}</div>
-              
+
               <div class="font-normal">{{ __('Nama Siswa') }}</div>
               <div class="font-light">:</div>
               <div class="font-normal">{{ $biodata->nama_siswa }}</div>

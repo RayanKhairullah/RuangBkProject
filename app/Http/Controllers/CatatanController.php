@@ -180,12 +180,4 @@ class CatatanController extends Controller
             $fileName
         );
     }
-
-    public function show(Catatan $catatan)
-    {
-        if (Auth::user()->role !== UserRole::Teacher) {
-            abort(403, 'Unauthorized action.');
-        }
-        return view('catatans.show', compact('catatan'));
-    }
 }

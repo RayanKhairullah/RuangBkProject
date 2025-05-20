@@ -45,7 +45,7 @@ class Login extends Component
         Session::regenerate();
 
         if (Auth::user()->role === UserRole::Teacher) {
-            $this->redirect(route("teacher.dashboard"), navigate: true);
+            $this->redirect(route("dashboard.teacher"), navigate: true);
             Session::flash("success", "Logged in successfully.");
             return;
         }

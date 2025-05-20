@@ -1,43 +1,54 @@
 <x-layouts.app :title="__('Edit Room')">
-    <h1 class="text-2xl font-bold mb-4">{{ __('Edit Room') }}</h1>
+    <div class="max-w-xl mx-auto bg-white dark:bg-gray-800 p-6 rounded shadow">
+        <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">{{ __('Edit Room') }}</h1>
 
-    <form action="{{ route('rooms.update', $room) }}" method="POST" class="mt-4">
-        @csrf
-        @method('PUT')
+        <form action="{{ route('rooms.update', $room) }}" method="POST" class="space-y-5">
+            @csrf
+            @method('PUT')
 
-        <!-- Pilih Jurusan -->
-        <div class="mb-4">
-            <label for="jurusan_id" class="block text-sm font-medium text-gray-700">{{ __('Jurusan') }}</label>
-            <select name="jurusan_id" id="jurusan_id" class="form-input w-full" required>
-                @foreach ($jurusans as $jurusan)
-                    <option value="{{ $jurusan->id }}"
-                        {{ old('jurusan_id', $room->jurusan_id) == $jurusan->id ? 'selected' : '' }}>
-                        {{ $jurusan->nama_jurusan }}
-                    </option>
-                @endforeach
-            </select>
-            @error('jurusan_id')
-                <span class="text-red-500 text-sm">{{ $message }}</span>
-            @enderror
-        </div>
+            <!-- Pilih Jurusan -->
+            <div>
+                <label for="jurusan_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {{ __('Jurusan') }}
+                </label>
+                <select name="jurusan_id" id="jurusan_id" required
+                        class="w-full mt-1 px-3 py-2 border rounded dark:bg-gray-700 dark:text-white dark:border-gray-600">
+                    @foreach ($jurusans as $jurusan)
+                        <option value="{{ $jurusan->id }}"
+                            {{ old('jurusan_id', $room->jurusan_id) == $jurusan->id ? 'selected' : '' }}>
+                            {{ $jurusan->nama_jurusan }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('jurusan_id')
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
 
-        <!-- Tingkatan Room -->
-        <div class="mb-4">
-            <label for="tingkatan_rooms" class="block text-sm font-medium text-gray-700">{{ __('Tingkatan Kelas') }}</label>
-            <input
-                type="text"
-                name="tingkatan_rooms"
-                id="tingkatan_rooms"
-                class="form-input w-full"
-                value="{{ old('tingkatan_rooms', $room->tingkatan_rooms) }}"
-                required
-            >
-            @error('tingkatan_rooms')
-                <span class="text-red-500 text-sm">{{ $message }}</span>
-            @enderror
-        </div>
+            <!-- Tingkatan Room -->
+            <div>
+                <label for="tingkatan_rooms" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {{ __('Tingkatan Kelas') }}
+                </label>
+                <input type="text" name="tingkatan_rooms" id="tingkatan_rooms"
+                       value="{{ old('tingkatan_rooms', $room->tingkatan_rooms) }}"
+                       class="w-full mt-1 px-3 py-2 border rounded dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                       required>
+                @error('tingkatan_rooms')
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
 
-        <button type="submit" class="btn btn-primary">{{ __('Update') }}</button>
-        <a href="{{ route('rooms.index') }}" class="btn btn-secondary">{{ __('Cancel') }}</a>
-    </form>
+            <!-- Action Buttons -->
+            <div class="flex justify-between">
+                <button type="submit" class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded shadow transition">
+                    {{ __('Update') }}
+                </button>
+                <a href="{{ route('rooms.index') }}"
+                   class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white px-4 py-2 rounded shadow transition">
+                    {{ __('Cancel') }}
+                </a>
+            </div>
+        </form>
+    </div>
 </x-layouts.app>

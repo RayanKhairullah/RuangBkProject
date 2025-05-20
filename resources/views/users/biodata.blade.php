@@ -1,7 +1,15 @@
 <x-layouts.app :title="__('Biodata of ') . $user->name">
-    <div class="mb-4">
-        <a href="{{ route('users.index') }}" class="btn btn-secondary">{{ __('Back to Users') }}</a>
-    </div>
+<div class="mb-4">
+  <a href="{{ route('users.index') }}"
+     class="inline-block px-5 py-2 rounded-md
+            bg-blue-600 text-white font-semibold
+            hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1
+            transition
+            dark:bg-blue-500 dark:hover:bg-blue-600"
+  >
+    {{ __('Back to Users') }}
+  </a>
+</div>
 
   <div class="relative">
     <div class="absolute top-0 left-0 w-28 h-28 bg-yellow-400 rounded-br-2xl"></div>

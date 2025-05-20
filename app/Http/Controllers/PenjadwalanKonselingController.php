@@ -154,9 +154,4 @@ class PenjadwalanKonselingController extends Controller
         $fileName = 'penjadwalan_konseling_' . now()->format('Ymd_His') . '.xlsx';
         return Excel::download(new PenjadwalanKonselingExport(), $fileName);
     }
-
-    public function show(PenjadwalanKonseling $penjadwalan)
-    {
-        return view('penjadwalan.show', compact('penjadwalan'));
-    }
 }

@@ -30,9 +30,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 //Teachers Routes
-Route::view('teacher/dashboard', 'teacher.dashboard')
-    ->middleware(['auth', 'verified', 'teacher'])
-    ->name('teacher.dashboard');
+Route::get('dashboard/teacher', [DashboardController::class, 'index'])
+    ->middleware(['auth','verified','teacher'])
+    ->name('dashboard.teacher');
 
 Route::middleware(['auth', 'verified', 'teacher'])->group(function () {
     Route::resource('users', UserController::class);

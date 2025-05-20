@@ -1,51 +1,77 @@
 <x-layouts.app :title="__('Room Details')">
-    <div class="mb-4">
-        <a href="{{ route('rooms.create') }}" class="btn btn-primary">{{ __('Create Room') }}</a>
+    <div class="mb-6 flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-gray-800 dark:text-white">
+            {{ __('Detail Kelas') }}
+        </h1>
+        <a href="{{ route('rooms.create') }}"
+           class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow">
+            {{ __('+ Tambah Kelas') }}
+        </a>
     </div>
 
-    <h1 class="text-2xl font-bold">{{ __('Kode Kelas: ') . $room->kode_rooms }}</h1>
-    <p>{{ __('Jurusan: ') . $room->jurusan->nama_jurusan }}</p>
-    <p>{{ __('Tingkatan Kelas: ') . $room->tingkatan_rooms }}</p>
+    {{-- Info Room --}}
+    <div class="bg-white dark:bg-gray-800 rounded shadow p-4 mb-6">
+        <p class="text-lg text-gray-800 dark:text-white font-semibold">
+            {{ __('Kode Kelas: ') }} <span class="font-normal">{{ $room->kode_rooms }}</span>
+        </p>
+        <p class="text-gray-700 dark:text-gray-300">
+            {{ __('Jurusan: ') . $room->jurusan->nama_jurusan }}
+        </p>
+        <p class="text-gray-700 dark:text-gray-300">
+            {{ __('Tingkatan Kelas: ') . $room->tingkatan_rooms }}
+        </p>
+    </div>
 
-    <h2 class="text-xl font-bold mt-4">{{ __('Anggota Kelas') }}</h2>
-    <table class="table-auto w-full mt-2">
-        <thead>
-            <tr>
-                <th>{{ __('Name') }}</th>
-                <th>{{ __('Email') }}</th>
-                <th>{{ __('Biodata') }}</th>
-                <th>{{ __('Actions') }}</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($users as $user)
+    {{-- Anggota Kelas --}}
+    <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-2">{{ __('Anggota Kelas') }}</h2>
+    <div class="overflow-x-auto bg-white dark:bg-gray-800 rounded shadow">
+        <table class="min-w-full text-sm text-left">
+            <thead class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 uppercase">
                 <tr>
-                    <td>{{ $user->name }}</td>
-                    <td>{{ $user->email }}</td>
-                    <td>
-                        @if ($user->biodata)
-                            
-                            <a href="{{ route('users.downloadBiodata', $user) }}" class="btn btn-sm btn-success">
-                                <span class="text-green-500">{{ __('Completed') }}</span>
-                            </a>
-                        @else
-                            <span class="text-red-500">{{ __('Not Completed') }}</span>
-                        @endif
-                                                @if ($user->biodata)
-                            <a href="{{ route('users.biodata', $user) }}" class="btn btn-sm btn-info">{{ __('View Biodata') }}</a>
-                        @else
-                            <span class="text-red-500">{{ __('Biodata not available') }}</span>
-                        @endif
-                    </td>
-                    <td>
-                        <form action="{{ route('users.destroy', $user) }}" method="POST" class="inline-block">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('{{ __('Are you sure?') }}')">{{ __('Delete') }}</button>
-                        </form>
-                    </td>
+                    <th class="px-4 py-2 border">{{ __('Nama') }}</th>
+                    <th class="px-4 py-2 border">{{ __('Email') }}</th>
+                    <th class="px-4 py-2 border">{{ __('Biodata') }}</th>
+                    <th class="px-4 py-2 border">{{ __('Aksi') }}</th>
                 </tr>
-            @endforeach
-        </tbody>
-    </table>
+            </thead>
+            <tbody class="text-gray-800 dark:text-gray-200">
+                @forelse ($users as $user)
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <td class="px-4 py-2 border">{{ $user->name }}</td>
+                        <td class="px-4 py-2 border">{{ $user->email }}</td>
+                        <td class="px-4 py-2 border space-y-1">
+                            @if ($user->biodata)
+                                <a href="{{ route('users.downloadBiodata', $user) }}"
+                                   class="inline-block bg-green-100 text-green-700 px-3 py-1 rounded text-xs hover:bg-green-200">
+                                   {{ __('Download') }}
+                                </a>
+                                <a href="{{ route('users.biodata', $user) }}"
+                                   class="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded text-xs hover:bg-blue-200">
+                                   {{ __('Lihat') }}
+                                </a>
+                            @else
+                                <span class="text-red-500 text-xs italic">{{ __('Belum Lengkap') }}</span>
+                            @endif
+                        </td>
+                        <td class="px-4 py-2 border">
+                            <form action="{{ route('users.destroy', $user) }}" method="POST"
+                                  onsubmit="return confirm('{{ __('Apakah Anda yakin ingin menghapus user ini?') }}')">
+                                @csrf
+                                @method('DELETE')
+                                <button class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs shadow">
+                                    {{ __('Hapus') }}
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="4" class="text-center text-gray-500 py-4 dark:text-gray-400">
+                            {{ __('Belum ada anggota di kelas ini.') }}
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 </x-layouts.app>

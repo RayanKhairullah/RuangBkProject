@@ -12,7 +12,7 @@ class Biodata extends Model
     protected $table = 'biodatas';
 
     protected $fillable = [
-        'user_id', 'nama_siswa', 'nisn', 'jenis_kelamin',
+        'user_id', 'nama_siswa', 'nisn','jurusan_id', 'room_id', 'jenis_kelamin',
         'tempat_lahir', 'tanggal_lahir', 'telepon', 'agama',
         'alamat_ktp', 'alamat_domisili', 'cita_cita', 'hobi', 'minat_bakat',
         'sd', 'smp', 'nama_ayah', 'pekerjaan_ayah', 'no_hp_ayah',
