@@ -37,24 +37,24 @@ class JurusanController extends Controller
         return redirect()->route('jurusans.index')->with('success', 'Jurusan created successfully.');
     }
 
-    public function edit(Jurusan $jurusan)
-    {
-        if (Auth::user()->role !== UserRole::Teacher) {
-            abort(403, 'Unauthorized action.');
-        }
-        return view('jurusans.edit', compact('jurusan'));
-    }
+    // public function edit(Jurusan $jurusan)
+    // {
+    //     if (Auth::user()->role !== UserRole::Teacher) {
+    //         abort(403, 'Unauthorized action.');
+    //     }
+    //     return view('jurusans.edit', compact('jurusan'));
+    // }
 
-    public function update(Request $request, Jurusan $jurusan)
-    {
-        $request->validate([
-            'nama_jurusan' => 'required|string|max:255',
-        ]);
+    // public function update(Request $request, Jurusan $jurusan)
+    // {
+    //     $request->validate([
+    //         'nama_jurusan' => 'required|string|max:255',
+    //     ]);
 
-        $jurusan->update($request->all());
+    //     $jurusan->update($request->all());
 
-        return redirect()->route('jurusans.index')->with('success', 'Jurusan updated successfully.');
-    }
+    //     return redirect()->route('jurusans.index')->with('success', 'Jurusan updated successfully.');
+    // }
 
     public function show(Jurusan $jurusan)
     {

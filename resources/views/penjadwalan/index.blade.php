@@ -19,18 +19,29 @@
         <form method="GET" action="{{ route('penjadwalan.index') }}" class="bg-white dark:bg-gray-800 p-4 rounded shadow space-y-4">
             <div class="grid md:grid-cols-5 sm:grid-cols-2 gap-4">
                 {{-- Guru Penerima --}}
-                <div>
-                    <label class="block text-sm text-gray-700 dark:text-gray-300">Guru Penerima</label>
-                    <select name="penerima" class="w-full mt-1 px-3 py-2 border dark:border-gray-600 rounded dark:bg-gray-700 dark:text-white">
-                        <option value="">{{ __('Semua Guru') }}</option>
-                        @foreach(\App\Models\User::where('role', App\Enums\UserRole::Teacher)->get() as $guru)
-                            <option value="{{ $guru->id }}" @selected(request('penerima') == $guru->id)>
-                                {{ $guru->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
+                @if(auth()->user()->role === App\Enums\UserRole::User)
+                    <div>
+                        <label class="block text-sm text-gray-700 dark:text-gray-300">Guru Penerima</label>
+                        <select name="penerima" class="w-full mt-1 px-3 py-2 border dark:border-gray-600 rounded dark:bg-gray-700 dark:text-white">
+                            <option value="">{{ __('Semua Guru') }}</option>
+                            @foreach(\App\Models\User::where('role', App\Enums\UserRole::Teacher)->get() as $guru)
+                                <option value="{{ $guru->id }}" @selected(request('penerima') == $guru->id)>
+                                    {{ $guru->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                @endif
 
+                {{-- Account Pengirim --}}
+                @if(auth()->user()->role === App\Enums\UserRole::Teacher)
+                    <div>
+                        <label class="block text-sm text-gray-700 dark:text-gray-300">Account Pengirim</label>
+                        <input type="text" name="pengirim" value="{{ old('pengirim') }}" placeholder="contoh: rayan" 
+                            class="w-full mt-1 px-3 py-2 border dark:border-gray-600 rounded dark:bg-gray-700 dark:text-white" />
+                    </div>
+                @endif
+                
                 {{-- Lokasi --}}
                 <div>
                     <label class="block text-sm text-gray-700 dark:text-gray-300">Lokasi</label>
@@ -50,9 +61,9 @@
                 <div>
                     <label class="block text-sm text-gray-700 dark:text-gray-300">Status</label>
                     <select name="status" class="w-full mt-1 px-3 py-2 border dark:border-gray-600 rounded dark:bg-gray-700 dark:text-white">
-                        <option value="">{{ __('Semua Status') }}</option>
-                        <option value="Complete" @selected(request('status')==='Complete')>Complete</option>
-                        <option value="Incomplete" @selected(request('status')==='Incomplete')>Incomplete</option>
+                        <option value="pending" @selected(request('status')==='pending')>Pending</option>
+                        <option value="accepted" @selected(request('status')==='accepted')>Accepted</option>
+                        <option value="rejected" @selected(request('status')==='rejected')>Rejected</option>
                     </select>
                 </div>
                 @endif
@@ -83,7 +94,7 @@
                         <th class="px-4 py-2 border dark:border-gray-600">{{ __('Tanggal & Waktu') }}</th>
                         <th class="px-4 py-2 border dark:border-gray-600">{{ __('Topik Dibahas') }}</th>
                         <th class="px-4 py-2 border dark:border-gray-600">{{ __('Solusi') }}</th>
-                        <th class="px-4 py-2 border dark:border-gray-600">{{ __('Status Konselling') }}</th>
+                        <th class="px-4 py-2 border dark:border-gray-600">{{ __('Status Pengajuan') }}</th>
                         <th class="px-4 py-2 border dark:border-gray-600">{{ __('Actions') }}</th>
                     </tr>
                 </thead>
@@ -107,23 +118,27 @@
                                    {{ __('Edit') }}
                                 </a>
 
-                                <form action="{{ route('penjadwalan.destroy', $jadwal->id) }}" method="POST" class="inline-block">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                            class="inline-block bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm shadow transition"
-                                            onclick="return confirm('{{ __('Yakin ingin menghapus?') }}')">
-                                        {{ __('Hapus') }}
-                                    </button>
-                                </form>
+                                @if (auth()->user()->role === App\Enums\UserRole::Teacher)
+                                    <form action="{{ route('penjadwalan.destroy', $jadwal->id) }}" method="POST" class="inline-block">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                                class="inline-block bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm shadow transition"
+                                                onclick="return confirm('{{ __('Yakin ingin menghapus?') }}')">
+                                            {{ __('Hapus') }}
+                                        </button>
+                                    </form>
+                                @endif
 
-                                <form action="{{ route('penjadwalan.send', $jadwal->id) }}" method="POST" class="inline-block">
-                                    @csrf
-                                    <button type="submit"
-                                            class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm shadow transition">
-                                        {{ __('Kirim Email') }}
-                                    </button>
-                                </form>
+                                @if (auth()->user()->role === App\Enums\UserRole::User)
+                                    <form action="{{ route('penjadwalan.send', $jadwal->id) }}" method="POST" class="inline-block">
+                                        @csrf
+                                        <button type="submit"
+                                                class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm shadow transition">
+                                            {{ __('Kirim Email') }}
+                                        </button>
+                                    </form>
+                                @endif
                             </td>
                         </tr>
                     @empty

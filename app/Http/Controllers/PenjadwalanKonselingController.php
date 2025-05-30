@@ -10,6 +10,8 @@ use App\Mail\KonselingNotification;
 use Illuminate\Support\Facades\Mail;
 use App\Exports\PenjadwalanKonselingExport;        
 use Maatwebsite\Excel\Facades\Excel; 
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Redirect;
 
 class PenjadwalanKonselingController extends Controller
 {
@@ -22,7 +24,7 @@ class PenjadwalanKonselingController extends Controller
 
         // Daftar filter yang diperbolehkan
         $allowedFilters = [
-            'penerima'   => fn($q, $v) => $q->where('penerima_id', $v),
+            'pengirim'   => fn($q, $v) => $q->whereHas('pengirim', fn($q2) => $q2->where('email', 'like', "%{$v}%")),
             'lokasi'     => fn($q, $v) => $q->where('lokasi', 'like', "%{$v}%"),
             'tanggal'    => fn($q, $v) => $q->whereDate('tanggal', $v),
             'status'     => fn($q, $v) => $q->where('status', $v),  // hanya untuk guru
@@ -112,7 +114,7 @@ class PenjadwalanKonselingController extends Controller
         if (Auth::user()->role === UserRole::Teacher) {
             $dataTeacher = $request->validate([
                 'solusi' => 'nullable|string',
-                'status' => 'nullable|in:Complete,Incomplete',
+                'status' => 'required|in:pending,accepted,rejected',
             ]);
             $data = array_merge($data, $dataTeacher);
         }
@@ -153,5 +155,41 @@ class PenjadwalanKonselingController extends Controller
         }
         $fileName = 'penjadwalan_konseling_' . now()->format('Ymd_His') . '.xlsx';
         return Excel::download(new PenjadwalanKonselingExport(), $fileName);
+    }
+
+    public function acceptAndRedirectToCalendar(PenjadwalanKonseling $penjadwalan)
+    {
+        // Pastikan hanya penerima yang dapat menerima jadwal
+        if (Auth::id() !== $penjadwalan->penerima_id) {
+            abort(403);
+        }
+
+        // Update status menjadi 'accepted'
+        $penjadwalan->update(['status' => 'accepted']);
+
+        // Buat URL Google Calendar
+        $start = Carbon::parse($penjadwalan->tanggal)->format('Ymd\THis\Z');
+        $end = Carbon::parse($penjadwalan->tanggal)->addHour()->format('Ymd\THis\Z');
+        $googleCalendarUrl = 'https://www.google.com/calendar/render?action=TEMPLATE' .
+            '&text=' . urlencode('Jadwal Konseling: ' . $penjadwalan->topik_dibahas) .
+            '&dates=' . $start . '/' . $end .
+            '&details=' . urlencode('Lokasi: ' . $penjadwalan->lokasi . "\nTopik Dibahas: " . $penjadwalan->topik_dibahas) .
+            '&location=' . urlencode($penjadwalan->lokasi) .
+            '&sf=true&output=xml';
+
+        // Redirect ke Google Calendar
+        return Redirect::away($googleCalendarUrl);
+    }
+
+    public function reject(PenjadwalanKonseling $penjadwalan)
+    {
+        if (Auth::id() !== $penjadwalan->penerima_id) {
+            abort(403);
+        }
+
+        $penjadwalan->update(['status' => 'rejected']);
+
+        return redirect()->route('penjadwalan.index')
+                        ->with('success', 'Anda telah **menolak** jadwal ini.');
     }
 }

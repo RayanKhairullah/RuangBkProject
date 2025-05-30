@@ -28,41 +28,70 @@
         <table class="min-w-full text-sm text-left">
             <thead class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 uppercase">
                 <tr>
-                    <th class="px-4 py-2 border">{{ __('Nama') }}</th>
-                    <th class="px-4 py-2 border">{{ __('Email') }}</th>
-                    <th class="px-4 py-2 border">{{ __('Biodata') }}</th>
-                    <th class="px-4 py-2 border">{{ __('Aksi') }}</th>
+                    <th class="border border-gray-300 px-4 py-2 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('Name') }}</th>
+                    <th class="border border-gray-300 px-4 py-2 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('Email') }}</th>
+                    <th class="border border-gray-300 px-4 py-2 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('Email Verify') }}</th>
+                    <th class="border border-gray-300 px-4 py-2 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('Role') }}</th>
+                    <th class="border border-gray-300 px-4 py-2 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('Status Biodata') }}</th>
+                    <th class="border border-gray-300 px-4 py-2 text-center text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('Actions') }}</th>
                 </tr>
             </thead>
             <tbody class="text-gray-800 dark:text-gray-200">
                 @forelse ($users as $user)
                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
-                        <td class="px-4 py-2 border">{{ $user->name }}</td>
-                        <td class="px-4 py-2 border">{{ $user->email }}</td>
-                        <td class="px-4 py-2 border space-y-1">
-                            @if ($user->biodata)
-                                <a href="{{ route('users.downloadBiodata', $user) }}"
-                                   class="inline-block bg-green-100 text-green-700 px-3 py-1 rounded text-xs hover:bg-green-200">
-                                   {{ __('Download') }}
-                                </a>
-                                <a href="{{ route('users.biodata', $user) }}"
-                                   class="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded text-xs hover:bg-blue-200">
-                                   {{ __('Lihat') }}
-                                </a>
+                        <td class="border border-gray-300 px-4 py-3 text-gray-800 text-sm dark:text-gray-200">{{ $user->name }}</td>
+                        <td class="border border-gray-300 px-4 py-3 text-gray-800 text-sm dark:text-gray-200">{{ $user->email }}</td>
+                        <td class="border border-gray-300 px-4 py-3 text-sm dark:text-gray-200">
+                            @if ($user->email_verified_at)
+                                <span class="text-green-600 font-semibold dark:text-green-400">{{ __('Verified') }}</span>
                             @else
-                                <span class="text-red-500 text-xs italic">{{ __('Belum Lengkap') }}</span>
+                                <span class="text-red-600 font-semibold dark:text-red-400">{{ __('Not Verified') }}</span>
                             @endif
                         </td>
-                        <td class="px-4 py-2 border">
-                            <form action="{{ route('users.destroy', $user) }}" method="POST"
-                                  onsubmit="return confirm('{{ __('Apakah Anda yakin ingin menghapus user ini?') }}')">
-                                @csrf
-                                @method('DELETE')
-                                <button class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs shadow">
-                                    {{ __('Hapus') }}
-                                </button>
-                            </form>
+                        <td class="border border-gray-300 px-4 py-3 text-gray-800 text-sm dark:text-gray-200">{{ ucfirst($user->role->value) }}</td>
+                        <td class="border border-gray-300 px-4 py-3 text-sm dark:text-gray-200">
+                            @if ($user->biodata)
+                                <a href="{{ route('rooms.users.downloadBiodata', ['room' => $room->id, 'user' => $user->id]) }}"
+                                    class="inline-block px-3 py-1 text-green-700 bg-green-100 rounded hover:bg-green-200 transition
+                                            dark:bg-green-900 dark:text-green-300 dark:hover:bg-green-800"
+                                >
+                                    {{ __('Download') }}
+                                </a>
+                            @else
+                                    <span class="text-red-600 font-semibold dark:text-red-400">{{ __('Not Completed') }}</span>
+                            @endif
                         </td>
+                        <td class="border border-gray-300 px-4 py-3 text-center space-x-2 text-sm dark:text-gray-200">
+                            @if ($user->biodata)
+                                <!-- Tombol Lihat Biodata -->
+                                <a href="{{ route('rooms.users.biodata', ['room' => $room->id, 'user' => $user->id]) }}"
+                                    class="inline-block px-3 py-1 rounded-md
+                                            bg-blue-100 text-blue-700 hover:bg-blue-200
+                                            dark:bg-blue-900 dark:text-blue-300 dark:hover:bg-blue-800
+                                            transition"
+                                >
+                                    {{ __('Lihat Biodata') }}
+                                </a>
+                            @else
+                                <span class="text-red-600 dark:text-red-400">{{ __('Biodata not available') }}</span>
+                            @endif
+
+                                <!-- Tombol Delete Account -->
+                                <form action="{{ route('rooms.users.destroy', ['room' => $room->id, 'user' => $user->id]) }}" method="POST" class="inline-block">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button
+                                        type="submit"
+                                        class="px-3 py-1 rounded-md
+                                                bg-red-600 text-white hover:bg-red-700
+                                                dark:bg-red-700 dark:hover:bg-red-600
+                                                transition"
+                                        onclick="return confirm('{{ __('Are you sure?') }}')"
+                                    >
+                                        {{ __('Delete Account') }}
+                                    </button>
+                                </form>
+                            </td>
                     </tr>
                 @empty
                     <tr>

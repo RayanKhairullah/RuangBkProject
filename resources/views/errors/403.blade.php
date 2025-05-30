@@ -69,6 +69,16 @@
     <div class="circle">403</div>
     <h1>Akses Ditolak</h1>
     <p>Maaf, kamu tidak memiliki izin untuk mengakses halaman ini.</p>
-    <a href="{{ route('dashboard') }}">Kembali</a>
+    <a href="javascript:history.back()">Kembali</a>
+
+    <script>
+    function goBack() {
+        if (document.referrer !== "") {
+            window.history.back();
+        } else {
+            window.location.href = "{{ route('dashboard') }}";
+        }
+    }
+    </script>
 </body>
 </html>

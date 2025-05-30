@@ -29,4 +29,8 @@ class PenjadwalanKonseling extends Model
     {
         return $this->belongsTo(User::class, 'penerima_id');
     }
+
+    protected $casts = [
+        'tanggal' => 'datetime',
+    ];
 }

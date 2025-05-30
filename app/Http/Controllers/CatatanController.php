@@ -10,6 +10,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\CatatanExport;
 use Illuminate\Support\Facades\Auth;
 use App\Enums\UserRole;
+use Illuminate\Support\Facades\DB;  
 
 class CatatanController extends Controller
 {
@@ -47,8 +48,11 @@ class CatatanController extends Controller
             : [];
 
         $rooms    = Room::all();
+        $totalPoinPerUser = Catatan::select('user_id', DB::raw('SUM(poin) as total_poin'))
+            ->groupBy('user_id')
+            ->pluck('total_poin', 'user_id'); 
 
-        return view('catatans.index', compact('catatans','students','rooms'));
+        return view('catatans.index', compact('catatans', 'students', 'rooms', 'totalPoinPerUser'));
     }
 
     public function create()

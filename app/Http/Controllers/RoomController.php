@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use APp\Enums\UserRole;
+use App\Models\User;
+use App\Exports\BiodataExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class RoomController extends Controller
 {
@@ -63,14 +66,20 @@ class RoomController extends Controller
         $request->validate([
             'jurusan_id' => 'required|exists:jurusans,id',
             'tingkatan_rooms' => 'required|string|max:255',
+            'angkatan_rooms' => 'required|string|max:255',
+            'tahun_ajaran_mulai' => 'nullable|date',
+            'tahun_ajaran_berakhir' => 'nullable|date',
         ]);
 
         $kode_rooms = strtoupper(Str::random(4)); // Generate kode unik
 
         Room::create([
             'jurusan_id' => $request->jurusan_id,
-            'kode_rooms' => $kode_rooms,
+            'kode_rooms' => strtoupper(Str::random(4)),
             'tingkatan_rooms' => $request->tingkatan_rooms,
+            'angkatan_rooms' => $request->angkatan_rooms,
+            'tahun_ajaran_mulai' => $request->tahun_ajaran_mulai,
+            'tahun_ajaran_berakhir' => $request->tahun_ajaran_berakhir,
         ]);
 
         return redirect()->route('rooms.index')->with('success', 'Room created successfully.');
@@ -90,11 +99,17 @@ class RoomController extends Controller
         $request->validate([
             'jurusan_id' => 'required|exists:jurusans,id',
             'tingkatan_rooms' => 'required|string|max:255',
+            'angkatan_rooms' => 'required|string|max:255',
+            'tahun_ajaran_mulai' => 'nullable|date',
+            'tahun_ajaran_berakhir' => 'nullable|date',
         ]);
 
         $room->update([
             'jurusan_id' => $request->jurusan_id,
             'tingkatan_rooms' => $request->tingkatan_rooms,
+            'angkatan_rooms' => $request->angkatan_rooms,
+            'tahun_ajaran_mulai' => $request->tahun_ajaran_mulai,
+            'tahun_ajaran_berakhir' => $request->tahun_ajaran_berakhir,
         ]);
 
         return redirect()->route('rooms.index')->with('success', 'Room updated successfully.');
@@ -117,5 +132,58 @@ class RoomController extends Controller
         $room->delete();
 
         return redirect()->route('rooms.index')->with('success', 'Room deleted successfully.');
+    }
+
+    public function showUserBiodata(Room $room, User $user)
+{
+    if (Auth::user()->role !== UserRole::Teacher) {
+        abort(403, 'Unauthorized action.');
+    }
+
+    // Cek apakah user berada di room yang dimaksud
+    if ($user->kode_rooms !== $room->kode_rooms) {
+        abort(403, 'User tidak berada di kelas ini.');
+    }
+
+    $biodata = $user->biodata;
+
+    if (!$biodata) {
+        return redirect()->route('rooms.show', $room)->with('error', 'Biodata tidak ditemukan.');
+    }
+
+    return view('rooms.biodata', compact('biodata', 'user', 'room'));
+}
+
+    public function destroyUser(Room $room, User $user)
+    {
+        if (Auth::user()->role !== UserRole::Teacher) {
+            abort(403, 'Unauthorized action.');
+        }
+        
+        // Pastikan user dari room yang sama
+        if ($user->kode_rooms !== $room->kode_rooms) {
+            abort(403, 'User tidak berada di kelas ini.');
+        }
+
+        $user->delete();
+        return redirect()->route('rooms.show', $room)->with('success', 'User berhasil dihapus dari kelas.');
+    }
+
+    public function downloadUserBiodata(Room $room, User $user)
+    {
+        if (Auth::user()->role !== UserRole::Teacher) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        if ($user->kode_rooms !== $room->kode_rooms) {
+            abort(403, 'User tidak berada di kelas ini.');
+        }
+
+        if (! $user->biodata) {
+            return back()->withError('Biodata tidak ditemukan.');
+        }
+
+        $fileName = 'biodata_' . str()->slug($user->name) . '.xlsx';
+        return Excel::download(new BiodataExport($user), $fileName);
     }
 }

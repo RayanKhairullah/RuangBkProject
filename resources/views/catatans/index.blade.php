@@ -3,26 +3,23 @@
 
     @if(auth()->user()->role === App\Enums\UserRole::Teacher)
     <form method="GET" action="{{ route('catatans.index') }}" class="mb-6 p-4 bg-white dark:bg-gray-800 shadow rounded-lg space-y-4 md:space-y-0 md:flex md:flex-wrap md:gap-4">
-        {{-- Siswa --}}
-        <div class="flex-1 min-w-[150px]">
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Siswa</label>
-            <select name="siswa" class="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-700 dark:text-white">
-                <option value="">{{ __('Semua Siswa') }}</option>
-                @foreach($students as $s)
-                    <option value="{{ $s->id }}" @selected(request('siswa') == $s->id)>{{ $s->name }}</option>
-                @endforeach
-            </select>
-        </div>
-
+        
         {{-- Room --}}
         <div class="flex-1 min-w-[150px]">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Kode Kelas</label>
             <select name="room" class="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-700 dark:text-white">
                 <option value="">{{ __('Semua Kelas') }}</option>
                 @foreach($rooms as $r)
-                    <option value="{{ $r->id }}" @selected(request('room') == $r->id)>{{ $r->kode_rooms }} - {{ $r->jurusan->nama_jurusan }}</option>
+                <option value="{{ $r->id }}" @selected(request('room') == $r->id)>{{ $r->kode_rooms }} - {{ $r->jurusan->nama_jurusan }}</option>
                 @endforeach
             </select>
+        </div>
+        
+        {{-- Kasus --}}
+        <div class="flex-1 min-w-[150px]">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Kasus</label>
+            <input type="text" name="pengirim" value="{{ old('pengirim') }}" placeholder="contoh: rayan" 
+                class="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-700 dark:text-white" />
         </div>
 
         {{-- Tanggal --}}
@@ -97,6 +94,7 @@
                     <th class="px-4 py-2 border">{{ __('Guru Pembimbing') }}</th>
                     <th class="px-4 py-2 border">{{ __('Catatan Guru') }}</th>
                     <th class="px-4 py-2 border">{{ __('Poin') }}</th>
+                    <th class="px-4 py-2 border">{{ __('Total Poin') }}</th>
                     @if(auth()->user()->role === App\Enums\UserRole::Teacher)
                         <th class="px-4 py-2 border">{{ __('Actions') }}</th>
                     @endif
@@ -120,26 +118,29 @@
                     <td class="px-4 py-2 border">{{ $catatan->guru_pembimbing ?? '-' }}</td>
                     <td class="px-4 py-2 border">{{ $catatan->catatan_guru ?? '-' }}</td>
                     <td class="px-4 py-2 border">{{ $catatan->poin ?? 0 }}</td>
+                    <td class="px-4 py-2 border">
+                        {{ $totalPoinPerUser[$catatan->user_id ?? 0] ?? 0 }}
+                    </td>
                     @if(auth()->user()->role === App\Enums\UserRole::Teacher)
-                       <td class="px-4 py-2 border space-x-1 flex flex-wrap gap-1">
+                    <td class="px-4 py-2 border space-x-1 flex flex-wrap gap-1">
                         <a href="{{ route('catatans.edit', $catatan->id) }}"
                         class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-md text-sm transition">
                         {{ __('Edit') }}
-            </a>
-        <form action="{{ route('catatans.destroy', $catatan->id) }}" method="POST" onsubmit="return confirm('{{ __('Yakin ingin menghapus?') }}')">
-        @csrf
-        @method('DELETE')
-        <button type="submit"
-                class="inline-block bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm transition">
-            {{ __('Hapus') }}
-        </button>
-    </form>
-</td>
+                        </a>
+                            <form action="{{ route('catatans.destroy', $catatan->id) }}" method="POST" onsubmit="return confirm('{{ __('Yakin ingin menghapus?') }}')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit"
+                                    class="inline-block bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm transition">
+                                {{ __('Hapus') }}
+                            </button>
+                        </form>
+                    </td>
                     @endif
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="10" class="text-center text-gray-500 py-4 dark:text-gray-400">{{ __('Tidak ada data catatan.') }}</td>
+                    <td colspan="11" class="text-center text-gray-500 py-4 dark:text-gray-400">{{ __('Tidak ada data catatan.') }}</td>
                 </tr>
                 @endforelse
             </tbody>

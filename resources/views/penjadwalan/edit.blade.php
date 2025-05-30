@@ -58,8 +58,9 @@
                 <label for="status" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Status') }}</label>
                 <select name="status" id="status"
                     class="w-full mt-1 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring focus:ring-blue-500 focus:border-blue-500">
-                    <option value="Incomplete" {{ $penjadwalan->status === 'Incomplete' ? 'selected' : '' }}>{{ __('Incomplete') }}</option>
-                    <option value="Complete" {{ $penjadwalan->status === 'Complete' ? 'selected' : '' }}>{{ __('Complete') }}</option>
+                        <option value="pending" @selected(request('status')==='pending')>Pending</option>
+                        <option value="accepted" @selected(request('status')==='accepted')>Accepted</option>
+                        <option value="rejected" @selected(request('status')==='rejected')>Rejected</option>
                 </select>
             </div>
         @endif

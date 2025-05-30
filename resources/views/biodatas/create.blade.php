@@ -15,7 +15,7 @@
                class="w-full px-4 py-2 rounded-full bg-indigo-100 dark:bg-indigo-900 text-sm dark:text-indigo-200 outline-none"
                required />
 
-        <input name="nisn" placeholder="NISN"
+        <input name="nisn" placeholder="NISN" type="number" inputmode="numeric" pattern="[0-9]*"
                value="{{ old('nisn') }}"
                class="w-full px-4 py-2 rounded-full bg-indigo-100 dark:bg-indigo-900 text-sm dark:text-indigo-200 outline-none"
                required />
@@ -70,10 +70,12 @@
 
       <!-- Kanan -->
       <div class="flex flex-col gap-3">
-        <input name="telepon" placeholder="Telepon"
-               value="{{ old('telepon') }}"
-               class="w-full px-4 py-2 rounded-full bg-indigo-100 dark:bg-indigo-900 text-sm dark:text-indigo-200 outline-none"
-               required />
+        <input name="telepon" placeholder="Nomor HP Siswa (08...)" type="number" inputmode="numeric"
+              value="{{ old('telepon') }}"
+              pattern="08[0-9]{8,12}"
+              title="Masukkan nomor HP yang diawali 08 dan terdiri dari 10–14 digit"
+              class="w-full px-4 py-2 rounded-full bg-indigo-100 dark:bg-indigo-900 text-sm dark:text-indigo-200 outline-none"
+              required />
 
         <select name="agama" required
                 class="w-full px-4 py-2 rounded-full bg-indigo-100 dark:bg-indigo-900 text-sm dark:text-indigo-200 outline-none">
@@ -140,18 +142,24 @@
       <input name="pekerjaan_ayah" placeholder="Pekerjaan Ayah"
              value="{{ old('pekerjaan_ayah') }}"
              class="px-4 py-2 rounded-full bg-indigo-100 dark:bg-indigo-900 text-sm dark:text-indigo-200 outline-none" />
-      <input name="no_hp_ayah" placeholder="No HP Ayah"
-             value="{{ old('no_hp_ayah') }}"
-             class="px-4 py-2 rounded-full bg-indigo-100 dark:bg-indigo-900 text-sm dark:text-indigo-200 outline-none" />
-      <input name="nama_ibu" placeholder="Nama Ibu"
+      <input name="no_hp_ayah" placeholder="No HP Ayah (08...)"
+        value="{{ old('no_hp_ayah') }}"
+        pattern="08[0-9]{8,12}"
+        title="Masukkan nomor HP ayah yang diawali 08 dan terdiri dari 10–14 digit"
+        class="px-4 py-2 rounded-full bg-indigo-100 dark:bg-indigo-900 text-sm dark:text-indigo-200 outline-none"
+        required />
+      <input name="nama_ibu" placeholder="Nama Ibu" 
              value="{{ old('nama_ibu') }}"
              class="px-4 py-2 rounded-full bg-indigo-100 dark:bg-indigo-900 text-sm dark:text-indigo-200 outline-none" />
       <input name="pekerjaan_ibu" placeholder="Pekerjaan Ibu"
              value="{{ old('pekerjaan_ibu') }}"
              class="px-4 py-2 rounded-full bg-indigo-100 dark:bg-indigo-900 text-sm dark:text-indigo-200 outline-none" />
-      <input name="no_hp_ibu" placeholder="No HP Ibu"
-             value="{{ old('no_hp_ibu') }}"
-             class="px-4 py-2 rounded-full bg-indigo-100 dark:bg-indigo-900 text-sm dark:text-indigo-200 outline-none" />
+      <input name="no_hp_ibu" placeholder="No HP Ibu (08...)"
+            value="{{ old('no_hp_ibu') }}"
+            pattern="08[0-9]{8,12}"
+            title="Masukkan nomor HP ibu yang diawali 08 dan terdiri dari 10–14 digit"
+            class="px-4 py-2 rounded-full bg-indigo-100 dark:bg-indigo-900 text-sm dark:text-indigo-200 outline-none"
+            required />
     </div>
 
     <div class="mt-6 flex justify-end">

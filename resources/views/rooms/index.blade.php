@@ -59,6 +59,7 @@
                     <th class="px-4 py-2 border">Kode Kelas</th>
                     <th class="px-4 py-2 border">Jurusan</th>
                     <th class="px-4 py-2 border">Tingkatan</th>
+                    <th class="px-4 py-2 border">Angkatan</th>
                     <th class="px-4 py-2 border">Aksi</th>
                 </tr>
             </thead>
@@ -69,10 +70,11 @@
                         <td class="px-4 py-2 border">{{ $room->kode_rooms }}</td>
                         <td class="px-4 py-2 border">{{ $room->jurusan->nama_jurusan }}</td>
                         <td class="px-4 py-2 border">{{ $room->tingkatan_rooms }}</td>
+                        <td class="px-4 py-2 border">{{ $room->angkatan_rooms }}</td>
                         <td class="px-4 py-2 border space-x-2">
                             <a href="{{ route('rooms.show', $room) }}"
                                class="text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded">
-                                Lihat
+                                Lihat Anggota Kelas
                             </a>
                             <a href="{{ route('rooms.edit', $room) }}"
                                class="text-xs bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded">
@@ -82,7 +84,7 @@
                                 @csrf
                                 @method('DELETE')
                                 <button class="text-xs bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded">
-                                    Hapus
+                                    Delete Kelas
                                 </button>
                             </form>
                         </td>

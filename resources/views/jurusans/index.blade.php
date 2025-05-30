@@ -23,12 +23,12 @@
                         <td class="px-4 py-2 space-x-2">
                             <a href="{{ route('jurusans.show', $jurusan) }}"
                                 class="inline-block px-3 py-1 text-sm text-white bg-blue-600 rounded hover:bg-blue-700 transition">
-                                {{ __('View') }}
+                                {{ __('Lihat Kelas') }}
                             </a>
-                            <a href="{{ route('jurusans.edit', $jurusan) }}"
+                            {{-- <a href="{{ route('jurusans.edit', $jurusan) }}"
                                 class="inline-block px-3 py-1 text-sm text-white bg-yellow-500 rounded hover:bg-yellow-600 transition">
                                 {{ __('Edit') }}
-                            </a>
+                            </a> --}}
                             <form action="{{ route('jurusans.destroy', $jurusan) }}" method="POST"
                                 class="inline-block"
                                 onsubmit="return confirm('{{ __('Are you sure?') }}')">
@@ -36,7 +36,7 @@
                                 @method('DELETE')
                                 <button type="submit"
                                     class="inline-block px-3 py-1 text-sm text-white bg-red-600 rounded hover:bg-red-700 transition">
-                                    {{ __('Delete') }}
+                                    {{ __('Delete Jurusan') }}
                                 </button>
                             </form>
                         </td>

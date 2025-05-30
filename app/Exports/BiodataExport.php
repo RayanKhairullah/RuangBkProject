@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\Biodata;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -13,6 +14,13 @@ use Carbon\Carbon;
 
 class BiodataExport implements FromQuery, WithHeadings, WithMapping, WithStyles
 {
+    protected $user;
+
+    public function __construct(User $user)
+    {
+        $this->user = $user;
+    }
+    
     /**
      * Query to fetch all biodata with related user, jurusan, and room.
      *
@@ -20,7 +28,8 @@ class BiodataExport implements FromQuery, WithHeadings, WithMapping, WithStyles
      */
     public function query(): Builder
     {
-        return Biodata::with(['user', 'jurusan', 'room']);
+        return Biodata::with(['user', 'jurusan', 'room'])
+            ->where('user_id', $this->user->id);
     }
 
     /**

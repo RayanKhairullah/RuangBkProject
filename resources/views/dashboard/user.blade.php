@@ -39,28 +39,14 @@
 
     {{-- Section RIWAYAT PELANGGARAN --}}
     <section id="riwayat-pelanggaran" class="py-12">
-    <form method="GET" action="{{ route('dashboard') }}" class="max-w-md mx-auto mb-6">
-        <div class="relative">
-        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
-            <!-- search icon SVG -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M8 16l-4-4m0 0l4-4m-4 4h18"/>
-            </svg>
-        </span>
-        <input
-            type="text"
-            name="search"
-            value="{{ request('search') }}"
-            placeholder="{{ __('Cari Kasus') }}"
-            class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-        />
-        </div>
-    </form>
+      {{-- Tabel Catatan --}}
+      @include('partials.catatan-table')
+    </section>
 
-    {{-- Tabel Catatan --}}
-    @include('partials.catatan-table')
+    {{-- Section RIWAYAT KONSELING --}}
+    <section id="riwayat-konseling" class="py-12">
+      {{-- Tabel Konseling --}}
+      @include('partials.konseling-table')
     </section>
 
       {{-- Section STRUCTURE --}}

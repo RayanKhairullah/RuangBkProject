@@ -12,6 +12,9 @@ return new class extends Migration {
             $table->foreignId('jurusan_id')->constrained('jurusans')->onDelete('cascade');
             $table->string('kode_rooms')->unique();
             $table->string('tingkatan_rooms');
+            $table->string('nama');
+            $table->date('mulai');
+            $table->date('berakhir');
             $table->timestamps();
         });
     }

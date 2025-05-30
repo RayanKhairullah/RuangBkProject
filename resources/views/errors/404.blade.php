@@ -69,8 +69,15 @@
     <div class="circle">404</div>
     <h1>Oops! Halaman Tidak Ditemukan</h1>
     <p>Sepertinya halaman yang kamu cari tidak tersedia.</p>
-    <a href="{{ url()->previous() }}">Kembali</a>
-
-
+    <a href="javascript:history.back()">Kembali</a>
+    <script>
+    function goBack() {
+        if (document.referrer !== "") {
+            window.history.back();
+        } else {
+            window.location.href = "{{ route('dashboard') }}";
+        }
+    }
+    </script>
 </body>
 </html>

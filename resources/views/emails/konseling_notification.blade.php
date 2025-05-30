@@ -14,18 +14,13 @@ Berikut adalah detail jadwal konseling Anda:
 
 Terima kasih telah menggunakan layanan kami.
 
-@php
-    $googleCalendarUrl = 'https://www.google.com/calendar/render?action=TEMPLATE' .
-        '&text=' . urlencode('Jadwal Konseling: ' . $jadwal->topik_dibahas) .
-        '&dates=' . \Carbon\Carbon::parse($jadwal->tanggal)->format('Ymd\THis\Z') . '/' .
-        \Carbon\Carbon::parse($jadwal->tanggal)->addHour()->format('Ymd\THis\Z') .
-        '&details=' . urlencode('Lokasi: ' . $jadwal->lokasi . "\nTopik Dibahas: " . $jadwal->topik_dibahas) .
-        '&location=' . urlencode($jadwal->lokasi) .
-        '&sf=true&output=xml';
-@endphp
+{{-- Tambah tombol Accept/Reject --}}
+@component('mail::button', ['url' => route('penjadwalan.accept_and_calendar', $jadwal->id)])
+Accept
+@endcomponent
 
-@component('mail::button', ['url' => $googleCalendarUrl])
-Add Jadwal
+@component('mail::button', ['url' => route('penjadwalan.reject', $jadwal->id)])
+Reject
 @endcomponent
 
 Salam,<br>

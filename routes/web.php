@@ -1,73 +1,86 @@
-<?php
+    <?php
 
-use App\Livewire\Settings\Appearance;
-use App\Livewire\Settings\Password;
-use App\Livewire\Settings\Profile;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\JurusanController;
-use App\Http\Controllers\RoomController;
-use App\Http\Controllers\BiodataController;
-use App\Http\Controllers\PenjadwalanKonselingController;
-use App\Http\Controllers\CatatanController;
-use App\Http\Controllers\SuratPanggilanController;
-use App\Http\Controllers\DashboardController;
+    use Illuminate\Support\Facades\Route;
+    use App\Http\Controllers\DashboardController;
+    use App\Http\Controllers\BiodataController;
+    use App\Http\Controllers\CatatanController;
+    use App\Http\Controllers\JurusanController;
+    use App\Http\Controllers\RoomController;
+    use App\Http\Controllers\SuratPanggilanController;
+    use App\Http\Controllers\PenjadwalanKonselingController;
+    use App\Livewire\Settings\Profile;
+    use App\Livewire\Settings\Password;
+    use App\Livewire\Settings\Appearance;
+    use Illuminate\Support\Facades\Mail;
+    use App\Mail\SendEmail; 
 
-//Users Routes
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+    // Halaman awal
+    Route::get('/', function () {
+        return view('welcome');
+    })->name('home');
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('biodatas/create',[BiodataController::class,'create'])->name('biodatas.create');
-    Route::post('biodatas',[BiodataController::class,'store'])->name('biodatas.store');
-    Route::get('biodatas/edit',[BiodataController::class,'edit'])->name('biodatas.edit');
-    Route::put('biodatas',[BiodataController::class,'update'])->name('biodatas.update');
-    Route::get('biodatas',[BiodataController::class,'show'])->name('biodatas.show');
-    Route::resource('penjadwalan', PenjadwalanKonselingController::class)->except(['show']);
-    Route::post('penjadwalan/{penjadwalan}/send', [PenjadwalanKonselingController::class, 'send'])->name('penjadwalan.send');
-    Route::resource('catatans', CatatanController::class)->except(['show']);
-});
+    // Untuk semua user yang sudah login & terverifikasi
+    Route::middleware(['auth', 'verified'])->group(function () {
+        // Biodata
+        Route::get('biodatas/create', [BiodataController::class, 'create'])->name('biodatas.create');
+        Route::post('biodatas', [BiodataController::class, 'store'])->name('biodatas.store');
+        Route::get('biodatas/edit', [BiodataController::class, 'edit'])->name('biodatas.edit');
+        Route::put('biodatas', [BiodataController::class, 'update'])->name('biodatas.update');
+        Route::get('biodatas', [BiodataController::class, 'show'])->name('biodatas.show');
 
-//Teachers Routes
-Route::get('dashboard/teacher', [DashboardController::class, 'index'])
-    ->middleware(['auth','verified','teacher'])
-    ->name('dashboard.teacher');
+        // Konseling
+        Route::resource('penjadwalan', PenjadwalanKonselingController::class)->except(['show']);
+        Route::post('penjadwalan/{penjadwalan}/send', [PenjadwalanKonselingController::class, 'send'])->name('penjadwalan.send');
+    });
 
-Route::middleware(['auth', 'verified', 'teacher'])->group(function () {
-    Route::resource('users', UserController::class);
-    Route::resource('jurusans', JurusanController::class);
-    Route::resource('rooms', RoomController::class);
-    Route::get('rooms/{room}', [RoomController::class, 'show'])->name('rooms.show');
-    Route::get('users/{user}/download-biodata', [UserController::class, 'downloadBiodata'])->name('users.downloadBiodata');
-    Route::get('penjadwalan/download', [PenjadwalanKonselingController::class, 'downloadAll'])->name('penjadwalan.download');
-    // Form untuk memilih siswa
-    Route::get('catatans/download-by-user', [CatatanController::class, 'showDownloadByUser'])
-         ->name('catatans.downloadForm');
-    // Proses download sesuai user_id terpilih
-    Route::post('catatans/download-by-user', [CatatanController::class, 'downloadByUser'])
-         ->name('catatans.downloadByUser');
-    Route::get('catatans/download-all', [CatatanController::class, 'downloadAll'])
-        ->name('catatans.downloadAll');
-    Route::resource('catatans', CatatanController::class)->except(['show']);
-    Route::get('penjadwalan/{penjadwalan}', [PenjadwalanKonselingController::class, 'show'])->name('penjadwalan.show');
-    Route::get('catatans/{catatan}', [CatatanController::class, 'show'])->name('catatans.show');
-    Route::resource('surat_panggilans', SuratPanggilanController::class);
-    Route::get('surat_panggilans/{id}/download', [SuratPanggilanController::class, 'generate'])
-            ->name('surat_panggilans.download');
-    Route::get('users/{user}/biodata', [UserController::class, 'showBiodata'])->name('users.biodata');
-    Route::get('jurusans/{jurusan}', [JurusanController::class, 'show'])->name('jurusans.show');
-});
+    // Dashboard khusus guru
+    Route::get('dashboard/teacher', [DashboardController::class, 'index'])
+        ->middleware(['auth', 'verified', 'teacher'])
+        ->name('dashboard.teacher');
 
-//Settings Routes
-Route::middleware(['auth'])->group(function () {
-    Route::redirect('settings', 'settings/profile');
+    // Route khusus guru (admin/teacher)
+    Route::middleware(['auth', 'verified', 'teacher'])->group(function () {
+        // Master Data
+        Route::resource('jurusans', JurusanController::class);
+        Route::resource('rooms', RoomController::class);
 
-    Route::get('settings/profile', Profile::class)->name('settings.profile');
-    Route::get('settings/password', Password::class)->name('settings.password');
-    Route::get('settings/appearance', Appearance::class)->name('settings.appearance');
-});
+        // Manajemen pengguna berdasarkan room (menggunakan kode_rooms)
+        Route::prefix('rooms/{room}')->group(function () {
+            Route::get('users/{user}/biodata', [RoomController::class, 'showUserBiodata'])->name('rooms.users.biodata');
+            Route::get('users/{user}/download-biodata', [RoomController::class, 'downloadUserBiodata'])->name('rooms.users.downloadBiodata');
+            Route::delete('users/{user}', [RoomController::class, 'destroyUser'])->name('rooms.users.destroy');
+        }); 
 
+        // Penjadwalan lengkap
+        Route::get('penjadwalan/download', [PenjadwalanKonselingController::class, 'downloadAll'])->name('penjadwalan.download');
+        Route::get('penjadwalan/{penjadwalan}/accept-and-calendar', [PenjadwalanKonselingController::class, 'acceptAndRedirectToCalendar'])
+            ->name('penjadwalan.accept_and_calendar');
+        Route::get('penjadwalan/{penjadwalan}/reject', 
+            [PenjadwalanKonselingController::class,'reject'])
+            ->name('penjadwalan.reject')
+            ;
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
-require __DIR__.'/auth.php';
+        // Catatan
+        Route::resource('catatans', CatatanController::class)->except(['show']); // lengkap, termasuk show
+        Route::get('catatans/download-by-user', [CatatanController::class, 'showDownloadByUser'])->name('catatans.downloadForm');
+        Route::post('catatans/download-by-user', [CatatanController::class, 'downloadByUser'])->name('catatans.downloadByUser');
+        Route::get('catatans/download-all', [CatatanController::class, 'downloadAll'])->name('catatans.downloadAll');
+
+        // Surat Panggilan
+        Route::resource('surat_panggilans', SuratPanggilanController::class);
+        Route::get('surat_panggilans/{id}/download', [SuratPanggilanController::class, 'generate'])->name('surat_panggilans.download');
+    });
+
+    // Settings
+    Route::middleware(['auth'])->group(function () {
+        Route::redirect('settings', 'settings/profile');
+        Route::get('settings/profile', Profile::class)->name('settings.profile');
+        Route::get('settings/password', Password::class)->name('settings.password');
+        Route::get('settings/appearance', Appearance::class)->name('settings.appearance');
+    });
+
+    // General Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth', 'verified');
+
+    // Auth routes
+    require __DIR__.'/auth.php';

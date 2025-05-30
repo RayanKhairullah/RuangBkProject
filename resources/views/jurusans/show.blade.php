@@ -32,7 +32,7 @@
                             <td class="border px-4 py-2 text-center">
                                 <a href="{{ route('rooms.show', $room) }}"
                                     class="inline-block px-3 py-1 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700 transition">
-                                    {{ __('View Room') }}
+                                    {{ __('Lihat Anggota Kelas') }}
                                 </a>
                             </td>
                         </tr>

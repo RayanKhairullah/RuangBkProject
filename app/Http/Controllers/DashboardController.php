@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\SuratPanggilan;
 use App\Models\Catatan;
+use App\Models\PenjadwalanKonseling;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -66,9 +67,16 @@ class DashboardController extends Controller
             ->paginate(5)
             ->withQueryString();  // pertahankan ?search di pagination
 
+        $konselings = PenjadwalanKonseling::with(['pengirim', 'penerima'])
+            ->where('pengirim_id', $user->id)
+            ->orWhere('penerima_id', $user->id)
+            ->orderByDesc('tanggal')
+            ->paginate(5);
+
         return view('dashboard.user', [
             'user'     => $user,
             'catatans' => $catatans,
+            'konselings' => $konselings,
         ]);
     }
 }

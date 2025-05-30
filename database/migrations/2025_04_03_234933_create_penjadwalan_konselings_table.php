@@ -16,7 +16,9 @@ return new class extends Migration {
             $table->dateTime('tanggal');
             $table->text('topik_dibahas');
             $table->text('solusi')->nullable();
-            $table->enum('status', ['Complete', 'Incomplete'])->default('Incomplete');
+            $table->enum('status', ['pending','accepted','rejected'])
+                ->default('pending')
+                ->after('solusi');
             $table->timestamps();
         });
     }

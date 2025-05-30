@@ -39,6 +39,34 @@
                 @enderror
             </div>
 
+            <div>
+                <label for="angkatan_rooms" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {{ __('Angkatan') }}
+                </label>
+                <input type="text" name="angkatan_rooms" id="angkatan_rooms"
+                    value="{{ old('angkatan_rooms', $room->angkatan_rooms) }}"
+                    class="w-full mt-1 px-3 py-2 border rounded dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                    required>
+            </div>
+
+            <div>
+                <label for="tahun_ajaran_mulai" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {{ __('Tahun Ajaran Mulai') }}
+                </label>
+                <input type="date" name="tahun_ajaran_mulai" id="tahun_ajaran_mulai"
+                    value="{{ old('tahun_ajaran_mulai', $room->tahun_ajaran_mulai) }}"
+                    class="w-full mt-1 px-3 py-2 border rounded dark:bg-gray-700 dark:text-white dark:border-gray-600">
+            </div>
+
+            <div>
+                <label for="tahun_ajaran_berakhir" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {{ __('Tahun Ajaran Berakhir') }}
+                </label>
+                <input type="date" name="tahun_ajaran_berakhir" id="tahun_ajaran_berakhir"
+                    value="{{ old('tahun_ajaran_berakhir', $room->tahun_ajaran_berakhir) }}"
+                    class="w-full mt-1 px-3 py-2 border rounded dark:bg-gray-700 dark:text-white dark:border-gray-600">
+            </div>
+
             <!-- Action Buttons -->
             <div class="flex justify-between">
                 <button type="submit" class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded shadow transition">

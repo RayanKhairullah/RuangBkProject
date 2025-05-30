@@ -1,4 +1,4 @@
-<x-layouts.app :title="__('Edit Jurusan')">
+{{-- <x-layouts.app :title="__('Edit Jurusan')">
     <div class="max-w-xl mx-auto bg-white dark:bg-gray-800 shadow-md rounded-md p-6">
         <form action="{{ route('jurusans.update', $jurusan) }}" method="POST" class="space-y-4">
             @csrf
@@ -26,4 +26,4 @@
             </div>
         </form>
     </div>
-</x-layouts.app>
+</x-layouts.app> --}}
