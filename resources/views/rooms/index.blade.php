@@ -32,9 +32,13 @@
         {{-- Tingkatan --}}
         <div class="flex-1">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tingkatan</label>
-            <input type="text" name="tingkatan" value="{{ request('tingkatan') }}"
-                   class="w-full mt-1 px-3 py-2 border rounded dark:bg-gray-700 dark:text-white dark:border-gray-600"
-                   placeholder="Cari tingkatan…">
+            <select name="tingkatan"
+                    class="w-full mt-1 px-3 py-2 border rounded dark:bg-gray-700 dark:text-white dark:border-gray-600">
+                <option value="">Pilih tingkatan...</option> {{-- Optional: A default "Please select" option --}}
+                <option value="10" {{ request('tingkatan') == '10' ? 'selected' : '' }}>10</option>
+                <option value="11" {{ request('tingkatan') == '11' ? 'selected' : '' }}>11</option>
+                <option value="12" {{ request('tingkatan') == '12' ? 'selected' : '' }}>12</option>
+            </select>
         </div>
 
         {{-- Tombol --}}

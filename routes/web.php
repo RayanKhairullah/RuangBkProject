@@ -11,14 +11,16 @@
     use App\Livewire\Settings\Profile;
     use App\Livewire\Settings\Password;
     use App\Livewire\Settings\Appearance;
-    use Illuminate\Support\Facades\Mail;
-    use App\Mail\SendEmail; 
+    use App\Http\Controllers\DocumentationController; // Pastikan controller diimpor
 
     // Halaman awal
     Route::get('/', function () {
         return view('welcome');
     })->name('home');
 
+    Route::get('/dokumentasi', [DocumentationController::class, 'index'])
+    ->name('documentation'); // Beri nama route 'documentation'
+    
     // Untuk semua user yang sudah login & terverifikasi
     Route::middleware(['auth', 'verified'])->group(function () {
         // Biodata
@@ -53,12 +55,16 @@
 
         // Penjadwalan lengkap
         Route::get('penjadwalan/download', [PenjadwalanKonselingController::class, 'downloadAll'])->name('penjadwalan.download');
+        Route::post('penjadwalan/{penjadwalan}/accept-and-calendar', [PenjadwalanKonselingController::class, 'acceptAndRedirectToCalendar'])
+            ->name('penjadwalan.accept_and_calendar');
         Route::get('penjadwalan/{penjadwalan}/accept-and-calendar', [PenjadwalanKonselingController::class, 'acceptAndRedirectToCalendar'])
             ->name('penjadwalan.accept_and_calendar');
         Route::get('penjadwalan/{penjadwalan}/reject', 
             [PenjadwalanKonselingController::class,'reject'])
-            ->name('penjadwalan.reject')
-            ;
+            ->name('penjadwalan.reject');
+        Route::post('penjadwalan/{penjadwalan}/reject', 
+            [PenjadwalanKonselingController::class,'reject'])
+            ->name('penjadwalan.reject');
 
         // Catatan
         Route::resource('catatans', CatatanController::class)->except(['show']); // lengkap, termasuk show
@@ -67,8 +73,13 @@
         Route::get('catatans/download-all', [CatatanController::class, 'downloadAll'])->name('catatans.downloadAll');
 
         // Surat Panggilan
-        Route::resource('surat_panggilans', SuratPanggilanController::class);
+        Route::get('surat_panggilans/{id}/stream-pdf', [SuratPanggilanController::class, 'streamPdf'])->name('surat_panggilans.stream_pdf');
+        // Rute kustom untuk download PDF (EXISTING)
         Route::get('surat_panggilans/{id}/download', [SuratPanggilanController::class, 'generate'])->name('surat_panggilans.download');
+        // Rute BARU untuk halaman preview yang meng-embed PDF
+        Route::get('surat_panggilans/{id}/preview', [SuratPanggilanController::class, 'previewPdfPage'])->name('surat_panggilans.preview_page');
+        // Rute resource untuk Surat Panggilan
+        Route::resource('surat_panggilans', SuratPanggilanController::class);
     });
 
     // Settings

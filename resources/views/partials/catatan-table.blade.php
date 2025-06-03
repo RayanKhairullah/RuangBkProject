@@ -1,7 +1,7 @@
 <div class="space-y-6">
-    <h1 class="text-3xl font-bold text-gray-800 dark:text-white">{{ __('Riwayat Catatan') }}</h1>
-    
-<div class="overflow-x-auto">
+  <h1 class="text-3xl font-bold text-gray-800 dark:text-white">{{ __('Riwayat Catatan') }}</h1>
+
+  <div class="overflow-x-auto">
     <table class="table-auto w-full border-collapse border border-gray-300">
       <thead class="bg-black-100">
         <tr>
@@ -21,7 +21,7 @@
         </tr>
       </thead>
       <tbody>
-        @foreach ($catatans as $catatan)
+        @forelse ($catatans as $catatan)
           <tr>
             <td class="border px-4 py-2">{{ $catatan->nama_siswa ?? '-' }}</td>
             <td class="border px-4 py-2">
@@ -48,7 +48,11 @@
               </td>
             @endif
           </tr>
-        @endforeach
+        @empty
+          <tr>
+            <td colspan="9" class="border px-4 py-2 text-center">Tidak ada riwayat Masalah.</td>
+          </tr>
+        @endforelse
       </tbody>
     </table>
     <div class="mt-4">

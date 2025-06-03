@@ -15,13 +15,36 @@ class SuratPanggilanController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         if (Auth::user()->role !== UserRole::Teacher) {
             abort(403, 'Unauthorized action.');
         }
-        $suratPanggilans = SuratPanggilan::latest()->paginate(10);
-        return view('surat_panggilans.index', compact('suratPanggilans'));
+
+        // Base query with eager loading
+        $baseQuery = SuratPanggilan::with('room.jurusan');
+
+        // Define allowed filters and their logic
+        $allowedFilters = [
+            'nama_siswa'  => fn($q, $v) => $q->whereRaw('LOWER(nama_siswa) LIKE ?', ['%' . mb_strtolower($v) . '%']),
+            'room'        => fn($q, $v) => $q->where('room_id', $v),
+            'nomor_surat' => fn($q, $v) => $q->whereRaw('LOWER(nomor_surat) LIKE ?', ['%' . mb_strtolower($v) . '%']),
+            'tanggal'     => fn($q, $v) => $q->whereDate('tanggal_waktu', $v),
+        ];
+
+        // Apply filters based on request
+        foreach ($request->only(array_keys($allowedFilters)) as $filter => $value) {
+            if ($value !== null && $value !== '') {
+                $baseQuery = $allowedFilters[$filter]($baseQuery, $value);
+            }
+        }
+
+        $suratPanggilans = $baseQuery->latest()->paginate(10)->withQueryString();
+
+        // Data rooms diperlukan untuk dropdown filter di Blade
+        $rooms = Room::with('jurusan')->get();
+
+        return view('surat_panggilans.index', compact('suratPanggilans', 'rooms'));
     }
 
     /**
@@ -43,7 +66,7 @@ class SuratPanggilanController extends Controller
     {
         $data = $request->validate([
             'nama_siswa'       => 'required|string|max:255',
-            'room_id'         => 'required|exists:rooms,id',
+            'room_id'          => 'required|exists:rooms,id',
             'nomor_surat'      => 'required|string|max:100|unique:surat_panggilans,nomor_surat',
             'tanggal_waktu'    => 'required|date',
             'tempat'           => 'required|string|max:255',
@@ -52,13 +75,13 @@ class SuratPanggilanController extends Controller
 
         $room = Room::with('jurusan')->findOrFail($data['room_id']);
         $data['jurusan'] = $room->kode_rooms
-                        . ' - ' . $room->jurusan->nama_jurusan
-                        . ' - ' . $room->tingkatan_rooms;
+                                . ' - ' . $room->jurusan->nama_jurusan
+                                . ' - ' . $room->tingkatan_rooms;
 
         SuratPanggilan::create($data);
 
         return redirect()->route('surat_panggilans.index')
-                         ->with('success', 'Surat Panggilan berhasil dibuat.');
+                            ->with('success', 'Surat Panggilan berhasil dibuat.');
     }
 
     /**
@@ -91,7 +114,7 @@ class SuratPanggilanController extends Controller
     {
         $data = $request->validate([
             'nama_siswa'       => 'required|string|max:255',
-            'room_id'         => 'required|exists:rooms,id',
+            'room_id'          => 'required|exists:rooms,id',
             'nomor_surat'      => 'required|string|max:100|unique:surat_panggilans,nomor_surat,' . $suratPanggilan->id,
             'tanggal_waktu'    => 'required|date',
             'tempat'           => 'required|string|max:255',
@@ -100,13 +123,13 @@ class SuratPanggilanController extends Controller
 
         $room = Room::with('jurusan')->findOrFail($data['room_id']);
         $data['jurusan'] = $room->kode_rooms
-                        . ' - ' . $room->jurusan->nama_jurusan
-                        . ' - ' . $room->tingkatan_rooms;
+                                . ' - ' . $room->jurusan->nama_jurusan
+                                . ' - ' . $room->tingkatan_rooms;
 
         $suratPanggilan->update($data);
 
         return redirect()->route('surat_panggilans.index')
-                         ->with('success', 'Surat Panggilan berhasil diperbarui.');
+                            ->with('success', 'Surat Panggilan berhasil diperbarui.');
     }
 
     /**
@@ -120,8 +143,9 @@ class SuratPanggilanController extends Controller
         $suratPanggilan->delete();
 
         return redirect()->route('surat_panggilans.index')
-                         ->with('success', 'Surat Panggilan berhasil dihapus.');
+                            ->with('success', 'Surat Panggilan berhasil dihapus.');
     }
+
     /**
      * Generate the PDF and stream/download it.
      */
@@ -130,22 +154,56 @@ class SuratPanggilanController extends Controller
         if (Auth::user()->role !== UserRole::Teacher) {
             abort(403, 'Unauthorized action.');
         }
-        // Ambil data surat panggilan beserta room/jurusan
         $surat = SuratPanggilan::with('room.jurusan')->findOrFail($id);
 
-        // Data tambahan untuk header/footer
-        $nama_kepala_sekolah   = 'Drs. Ismael Harahap';         // sesuaikan
-        $jabatan_kepala_sekolah = 'Kepala Sekolah';        // sesuaikan
+        $nama_kepala_sekolah    = 'Drs. Ismael Harahap';
+        $jabatan_kepala_sekolah = 'Kepala Sekolah';
 
-        // Render view menjadi PDF
         $pdf = Pdf::loadView('surat_panggilans.template', [
-            'suratPanggilan'          => $surat,
-            'nama_kepala_sekolah'     => $nama_kepala_sekolah,
-            'jabatan_kepala_sekolah'  => $jabatan_kepala_sekolah,
+            'suratPanggilan'    => $surat,
+            'nama_kepala_sekolah'   => $nama_kepala_sekolah,
+            'jabatan_kepala_sekolah'    => $jabatan_kepala_sekolah,
         ])
         ->setPaper('a4', 'portrait');
 
-        // Download dengan nama file berdasarkan nomor surat
         return $pdf->download('Surat_Panggilan_'.$surat->nomor_surat.'.pdf');
+    }
+
+    /**
+     * Stream the PDF for preview in browser. (METODE BARU untuk streaming)
+     */
+    public function streamPdf($id)
+    {
+        if (Auth::user()->role !== UserRole::Teacher) {
+            abort(403, 'Unauthorized action.');
+        }
+        $surat = SuratPanggilan::with('room.jurusan')->findOrFail($id);
+
+        $nama_kepala_sekolah    = 'Drs. Ismael Harahap';
+        $jabatan_kepala_sekolah = 'Kepala Sekolah';
+
+        $pdf = Pdf::loadView('surat_panggilans.template', [
+            'suratPanggilan'    => $surat,
+            'nama_kepala_sekolah'   => $nama_kepala_sekolah,
+            'jabatan_kepala_sekolah'    => $jabatan_kepala_sekolah,
+        ])
+        ->setPaper('a4', 'portrait');
+
+        return $pdf->stream('Surat_Panggilan_'.$surat->nomor_surat.'.pdf'); // Menggunakan stream()
+    }
+
+    /**
+     * Display a preview page that embeds the PDF. (METODE UTAMA untuk halaman preview)
+     */
+    public function previewPdfPage($id) // Ganti nama agar tidak bentrok dengan streamPdf
+    {
+        if (Auth::user()->role !== UserRole::Teacher) {
+            abort(403, 'Unauthorized action.');
+        }
+        $surat = SuratPanggilan::with('room.jurusan')->findOrFail($id);
+        // Kita tidak perlu mengirim data surat lengkap ke view ini,
+        // karena view ini hanya akan me-load iframe yang URL-nya sudah memiliki ID.
+        // Cukup ID saja yang diperlukan untuk membuat URL stream.
+        return view('surat_panggilans.pdf-preview', compact('surat')); // Kirim $surat untuk mendapatkan ID
     }
 }

@@ -5,14 +5,14 @@
         @if(auth()->user()->role === App\Enums\UserRole::User)
             <a href="{{ route('penjadwalan.create') }}"
                class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow transition">
-               {{ __('Buat Jadwal') }}
+                {{ __('Buat Jadwal') }}
             </a>
         @endif
 
         @if(auth()->user()->role === App\Enums\UserRole::Teacher)
             <a href="{{ route('penjadwalan.download') }}"
                class="inline-block bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow transition">
-               {{ __('Download Semua Jadwal') }}
+                {{ __('Download All [Excel]') }}
             </a>
         @endif
 
@@ -37,11 +37,12 @@
                 @if(auth()->user()->role === App\Enums\UserRole::Teacher)
                     <div>
                         <label class="block text-sm text-gray-700 dark:text-gray-300">Account Pengirim</label>
-                        <input type="text" name="pengirim" value="{{ old('pengirim') }}" placeholder="contoh: rayan" 
-                            class="w-full mt-1 px-3 py-2 border dark:border-gray-600 rounded dark:bg-gray-700 dark:text-white" />
+                        {{-- Changed old('pengirim') to request('pengirim') for filter persistence --}}
+                        <input type="text" name="pengirim" value="{{ request('pengirim') }}" placeholder="Email/Nama Pengirim"
+                               class="w-full mt-1 px-3 py-2 border dark:border-gray-600 rounded dark:bg-gray-700 dark:text-white" />
                     </div>
                 @endif
-                
+
                 {{-- Lokasi --}}
                 <div>
                     <label class="block text-sm text-gray-700 dark:text-gray-300">Lokasi</label>
@@ -52,6 +53,7 @@
                 {{-- Tanggal --}}
                 <div>
                     <label class="block text-sm text-gray-700 dark:text-gray-300">Tanggal</label>
+                    {{-- Changed value="{{ request('tanggal') }}" to value="{{ request('tanggal') }}" --}}
                     <input type="date" name="tanggal" value="{{ request('tanggal') }}"
                            class="w-full mt-1 px-3 py-2 border dark:border-gray-600 rounded dark:bg-gray-700 dark:text-white" />
                 </div>
@@ -61,6 +63,7 @@
                 <div>
                     <label class="block text-sm text-gray-700 dark:text-gray-300">Status</label>
                     <select name="status" class="w-full mt-1 px-3 py-2 border dark:border-gray-600 rounded dark:bg-gray-700 dark:text-white">
+                        <option value="" @selected(!request()->filled('status'))>{{ __('Semua Status') }}</option>
                         <option value="pending" @selected(request('status')==='pending')>Pending</option>
                         <option value="accepted" @selected(request('status')==='accepted')>Accepted</option>
                         <option value="rejected" @selected(request('status')==='rejected')>Rejected</option>
@@ -75,7 +78,7 @@
                 </button>
                 <a href="{{ route('penjadwalan.index') }}"
                    class="px-4 py-2 border dark:border-gray-600 rounded text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-                   {{ __('Reset') }}
+                    {{ __('Reset') }}
                 </a>
             </div>
         </form>
@@ -125,7 +128,7 @@
                                         <button type="submit"
                                                 class="inline-block bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm shadow transition"
                                                 onclick="return confirm('{{ __('Yakin ingin menghapus?') }}')">
-                                            {{ __('Hapus') }}
+                                                {{ __('Hapus') }}
                                         </button>
                                     </form>
                                 @endif
@@ -135,7 +138,24 @@
                                         @csrf
                                         <button type="submit"
                                                 class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm shadow transition">
-                                            {{ __('Kirim Email') }}
+                                                {{ __('Kirim Email') }}
+                                        </button>
+                                    </form>
+                                @endif
+
+                                @if (auth()->user()->role === App\Enums\UserRole::Teacher && $jadwal->status === 'pending')
+                                    <form action="{{ route('penjadwalan.accept_and_calendar', $jadwal->id) }}" method="POST" class="inline-block">
+                                        @csrf
+                                        <button type="submit"
+                                                class="inline-block bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm shadow transition">
+                                                {{ __('Accept') }}
+                                        </button>
+                                    </form>
+                                    <form action="{{ route('penjadwalan.reject', $jadwal->id) }}" method="POST" class="inline-block">
+                                        @csrf
+                                        <button type="submit"
+                                                class="inline-block bg-green-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm shadow transition">
+                                                {{ __('Reject') }}
                                         </button>
                                     </form>
                                 @endif

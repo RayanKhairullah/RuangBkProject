@@ -20,6 +20,7 @@
                 </label>
                 <input type="text" name="angkatan_rooms" id="angkatan_rooms"
                     class="w-full mt-1 px-3 py-2 border rounded dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                    placeholder="contoh: Angkatan 21"
                     required>
             </div>
 
@@ -43,9 +44,14 @@
                 <label for="tingkatan_rooms" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     {{ __('Tingkatan Room') }}
                 </label>
-                <input type="text" name="tingkatan_rooms" id="tingkatan_rooms"
-                       class="w-full mt-1 px-3 py-2 border rounded dark:bg-gray-700 dark:text-white dark:border-gray-600"
-                       required>
+                <select name="tingkatan_rooms" id="tingkatan_rooms" {{-- Ubah dari input ke select --}}
+                        class="w-full mt-1 px-3 py-2 border rounded dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                        required>
+                    <option value="">Pilih Tingkatan</option> {{-- Opsi default --}}
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                </select>
             </div>
 
             <div class="flex justify-end">

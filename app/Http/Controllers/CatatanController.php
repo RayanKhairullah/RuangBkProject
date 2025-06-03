@@ -11,6 +11,7 @@ use App\Exports\CatatanExport;
 use Illuminate\Support\Facades\Auth;
 use App\Enums\UserRole;
 use Illuminate\Support\Facades\DB;  
+use Illuminate\Support\Facades\Log; 
 
 class CatatanController extends Controller
 {
@@ -30,6 +31,7 @@ class CatatanController extends Controller
             'tanggal'    => fn($q,$v) => $q->whereDate('tanggal', $v),
             'poin_min'   => fn($q,$v) => $q->where('poin', '>=', $v),
             'poin_max'   => fn($q,$v) => $q->where('poin', '<=', $v),
+            'kasus'      => fn($q,$v) => $q->whereRaw('LOWER(kasus) LIKE ?', ['%' . mb_strtolower($v) . '%']),
         ];
 
         foreach ($request->only(array_keys($allowedFilters)) as $filter=>$value) {
@@ -37,6 +39,9 @@ class CatatanController extends Controller
                 $baseQuery = $allowedFilters[$filter]($baseQuery, $value);
             }
         }
+
+        // Untuk debugging: lihat query yang terbentuk
+        // dd($baseQuery->toSql(), $baseQuery->getBindings());
 
         $catatans = $baseQuery
             ->orderBy('tanggal','desc')
@@ -47,10 +52,10 @@ class CatatanController extends Controller
             ? User::where('role', UserRole::User)->get()
             : [];
 
-        $rooms    = Room::all();
+        $rooms      = Room::all();
         $totalPoinPerUser = Catatan::select('user_id', DB::raw('SUM(poin) as total_poin'))
             ->groupBy('user_id')
-            ->pluck('total_poin', 'user_id'); 
+            ->pluck('total_poin', 'user_id');
 
         return view('catatans.index', compact('catatans', 'students', 'rooms', 'totalPoinPerUser'));
     }

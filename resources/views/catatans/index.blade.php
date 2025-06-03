@@ -18,7 +18,8 @@
         {{-- Kasus --}}
         <div class="flex-1 min-w-[150px]">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Kasus</label>
-            <input type="text" name="pengirim" value="{{ old('pengirim') }}" placeholder="contoh: rayan" 
+            {{-- PERBAIKAN DI SINI: name="kasus" dan value="{{ request('kasus') }}" --}}
+            <input type="text" name="kasus" value="{{ request('kasus') }}" placeholder="contoh: maling"
                 class="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-700 dark:text-white" />
         </div>
 
@@ -53,7 +54,7 @@
     @if(auth()->user()->role === App\Enums\UserRole::Teacher)
     <div class="mb-6 flex flex-col md:flex-row gap-4">
         <a href="{{ route('catatans.create') }}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">{{ __('Buat Catatan') }}</a>
-        <a href="{{ route('catatans.downloadAll') }}" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md">{{ __('Download Semua Catatan') }}</a>
+        <a href="{{ route('catatans.downloadAll') }}" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md">{{ __('Download All [Excel]') }}</a>
     </div>
 
     <form action="{{ route('catatans.downloadByUser') }}" method="POST" class="mb-6 p-4 bg-white dark:bg-gray-800 shadow rounded-lg flex flex-col md:flex-row items-start md:items-end gap-4">
@@ -72,7 +73,7 @@
         </div>
         <div>
             <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md">
-                {{ __('Download Data Siswa') }}
+                {{ __('Download By Email [Excel]') }}
             </button>
         </div>
     </form>

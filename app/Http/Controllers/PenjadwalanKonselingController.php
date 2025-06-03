@@ -1,17 +1,19 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use App\Enums\UserRole; 
+use App\Enums\UserRole;
 use App\Models\PenjadwalanKonseling;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Mail\KonselingNotification;
 use Illuminate\Support\Facades\Mail;
-use App\Exports\PenjadwalanKonselingExport;        
-use Maatwebsite\Excel\Facades\Excel; 
+use App\Exports\PenjadwalanKonselingExport;
+use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Log;
 
 class PenjadwalanKonselingController extends Controller
 {
@@ -19,25 +21,51 @@ class PenjadwalanKonselingController extends Controller
     {
         // Hanya pengirim atau penerima
         $baseQuery = PenjadwalanKonseling::with(['pengirim', 'penerima'])
-            ->where('pengirim_id', Auth::id())
-            ->orWhere('penerima_id', Auth::id());
+            ->where(function($query) {
+                $query->where('pengirim_id', Auth::id())
+                      ->orWhere('penerima_id', Auth::id());
+            });
 
-        // Daftar filter yang diperbolehkan
-        $allowedFilters = [
-            'pengirim'   => fn($q, $v) => $q->whereHas('pengirim', fn($q2) => $q2->where('email', 'like', "%{$v}%")),
-            'lokasi'     => fn($q, $v) => $q->where('lokasi', 'like', "%{$v}%"),
-            'tanggal'    => fn($q, $v) => $q->whereDate('tanggal', $v),
-            'status'     => fn($q, $v) => $q->where('status', $v),  // hanya untuk guru
-        ];
+        // Apply filters
+        if ($request->filled('penerima')) {
+            $baseQuery->where('penerima_id', $request->penerima);
+        }
 
-        // Apply setiap filter yang ada di query string
-        foreach ($request->only(array_keys($allowedFilters)) as $filter => $value) {
-            if ($value !== null && $value !== '') {
-                $baseQuery = $allowedFilters[$filter]($baseQuery, $value);
+        // Account Pengirim (Filter by email OR nama_pengirim)
+        if ($request->filled('pengirim')) {
+            $searchTerm = '%' . $request->pengirim . '%';
+            $baseQuery->where(function($query) use ($searchTerm) {
+                $query->whereHas('pengirim', function ($q) use ($searchTerm) {
+                    $q->where('email', 'like', $searchTerm);
+                })->orWhere('nama_pengirim', 'like', $searchTerm); // Filter by nama_pengirim
+            });
+        }
+
+        if ($request->filled('lokasi')) {
+            $searchTerm = '%' . mb_strtolower($request->lokasi) . '%'; // Konversi input ke lowercase
+            $baseQuery->whereRaw('LOWER(lokasi) LIKE ?', [$searchTerm]); // Bandingkan kolom juga dalam lowercase
+        }
+
+        // Tanggal
+        if ($request->filled('tanggal')) {
+            // Ensure the date format matches the database format (YYYY-MM-DD)
+            // Carbon::parse() is robust for different date inputs
+            try {
+                $date = Carbon::parse($request->tanggal)->format('Y-m-d');
+                $baseQuery->whereDate('tanggal', $date);
+            } catch (\Exception $e) {
+                // Log the error or handle it as appropriate, e.g., ignore invalid date input
+                // For now, we'll just ignore it, but in a real app, you might flash a message
+                Log::error("Invalid date format for filter: " . $request->tanggal . " Error: " . $e->getMessage());
             }
         }
 
-        // Paginate dan retain query string
+        // Status (only for teacher role)
+        if (Auth::user()->role === UserRole::Teacher && $request->filled('status')) {
+            $baseQuery->where('status', $request->status);
+        }
+
+        // Paginate and retain query string
         $jadwals = $baseQuery
             ->orderBy('tanggal', 'desc')
             ->paginate(5)
@@ -130,10 +158,10 @@ class PenjadwalanKonselingController extends Controller
         if (Auth::id() !== $penjadwalan->pengirim_id && Auth::id() !== $penjadwalan->penerima_id) {
             abort(403, 'Unauthorized action.');
         }
-    
+
         // Kirim email ke penerima
         Mail::to($penjadwalan->penerima->email)->send(new KonselingNotification($penjadwalan));
-    
+
         return redirect()->route('penjadwalan.index')->with('success', 'Jadwal berhasil dikirim ke email penerima.');
     }
 
@@ -190,6 +218,6 @@ class PenjadwalanKonselingController extends Controller
         $penjadwalan->update(['status' => 'rejected']);
 
         return redirect()->route('penjadwalan.index')
-                        ->with('success', 'Anda telah **menolak** jadwal ini.');
+            ->with('success', 'Anda telah **menolak** jadwal ini.');
     }
 }

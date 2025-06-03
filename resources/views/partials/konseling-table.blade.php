@@ -13,18 +13,18 @@
             </tr>
         </thead>
         <tbody>
-        @forelse ($konselings as $konseling)
-            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
-                <td class="border px-4 py-2 dark:border-gray-600">{{ $konseling->lokasi }}</td>
-                <td class="border px-4 py-2 dark:border-gray-600">{{ $konseling->tanggal }}</td>
-                <td class="border px-4 py-2 dark:border-gray-600">{{ $konseling->nama_penerima }}</td>
-                <td class="border px-4 py-2 dark:border-gray-600">{{ $konseling->topik_dibahas }}</td>
-                <td class="border px-4 py-2 dark:border-gray-600">{{ $konseling->status }}</td>
-            </tr>
-            @empty
-                <tr>
-                <td colspan="5" class="border px-4 py-2 text-center">Tidak ada riwayat konseling.</td>
+            @forelse ($konselings as $konseling)
+                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <td class="border px-4 py-2 dark:border-gray-600">{{ $konseling->lokasi }}</td>
+                    <td class="border px-4 py-2 dark:border-gray-600">{{ $konseling->tanggal }}</td>
+                    <td class="border px-4 py-2 dark:border-gray-600">{{ $konseling->nama_penerima }}</td>
+                    <td class="border px-4 py-2 dark:border-gray-600">{{ $konseling->topik_dibahas }}</td>
+                    <td class="border px-4 py-2 dark:border-gray-600">{{ $konseling->status }}</td>
                 </tr>
+                @empty
+                    <tr>
+                        <td colspan="5" class="border px-4 py-2 text-center">Tidak ada riwayat konseling.</td>
+                    </tr>
             @endforelse
         </tbody>
         </table>

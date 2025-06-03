@@ -55,7 +55,7 @@
                                     class="inline-block px-3 py-1 text-green-700 bg-green-100 rounded hover:bg-green-200 transition
                                             dark:bg-green-900 dark:text-green-300 dark:hover:bg-green-800"
                                 >
-                                    {{ __('Download') }}
+                                    {{ __('Download [Excel]') }}
                                 </a>
                             @else
                                     <span class="text-red-600 font-semibold dark:text-red-400">{{ __('Not Completed') }}</span>
@@ -70,7 +70,7 @@
                                             dark:bg-blue-900 dark:text-blue-300 dark:hover:bg-blue-800
                                             transition"
                                 >
-                                    {{ __('Lihat Biodata') }}
+                                    {{ __('Preview Biodata') }}
                                 </a>
                             @else
                                 <span class="text-red-600 dark:text-red-400">{{ __('Biodata not available') }}</span>

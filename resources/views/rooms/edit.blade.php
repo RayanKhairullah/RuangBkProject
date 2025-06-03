@@ -6,7 +6,6 @@
             @csrf
             @method('PUT')
 
-            <!-- Pilih Jurusan -->
             <div>
                 <label for="jurusan_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     {{ __('Jurusan') }}
@@ -25,15 +24,18 @@
                 @enderror
             </div>
 
-            <!-- Tingkatan Room -->
             <div>
                 <label for="tingkatan_rooms" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     {{ __('Tingkatan Kelas') }}
                 </label>
-                <input type="text" name="tingkatan_rooms" id="tingkatan_rooms"
-                       value="{{ old('tingkatan_rooms', $room->tingkatan_rooms) }}"
-                       class="w-full mt-1 px-3 py-2 border rounded dark:bg-gray-700 dark:text-white dark:border-gray-600"
-                       required>
+                <select name="tingkatan_rooms" id="tingkatan_rooms" {{-- Ubah dari input ke select --}}
+                        class="w-full mt-1 px-3 py-2 border rounded dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                        required>
+                    <option value="">Pilih Tingkatan</option> {{-- Opsi default --}}
+                    <option value="10" {{ old('tingkatan_rooms', $room->tingkatan_rooms) == '10' ? 'selected' : '' }}>10</option>
+                    <option value="11" {{ old('tingkatan_rooms', $room->tingkatan_rooms) == '11' ? 'selected' : '' }}>11</option>
+                    <option value="12" {{ old('tingkatan_rooms', $room->tingkatan_rooms) == '12' ? 'selected' : '' }}>12</option>
+                </select>
                 @error('tingkatan_rooms')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                 @enderror
@@ -46,6 +48,7 @@
                 <input type="text" name="angkatan_rooms" id="angkatan_rooms"
                     value="{{ old('angkatan_rooms', $room->angkatan_rooms) }}"
                     class="w-full mt-1 px-3 py-2 border rounded dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                    placeholder="contoh: Angkatan 21"
                     required>
             </div>
 
@@ -67,7 +70,6 @@
                     class="w-full mt-1 px-3 py-2 border rounded dark:bg-gray-700 dark:text-white dark:border-gray-600">
             </div>
 
-            <!-- Action Buttons -->
             <div class="flex justify-between">
                 <button type="submit" class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded shadow transition">
                     {{ __('Update') }}

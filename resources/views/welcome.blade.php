@@ -11,7 +11,7 @@
 </head>
 <body class="bg-white">
     <!-- Header -->
-    <header class="bg-white shadow-sm">
+    <header class="bg-white">
         <div class="container mx-auto px-4 sm:px-6 py-4">
             <div class="flex items-center justify-between">
                 <!-- Logo -->
