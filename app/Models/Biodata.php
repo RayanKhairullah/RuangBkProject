@@ -19,6 +19,10 @@ class Biodata extends Model
         'nama_ibu', 'pekerjaan_ibu', 'no_hp_ibu', 'gol_darah', 'status', 'image',
     ];
 
+    protected $casts = [
+        'tanggal_lahir' => 'date',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);

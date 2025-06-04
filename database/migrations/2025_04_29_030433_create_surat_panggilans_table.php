@@ -13,13 +13,16 @@ return new class extends Migration
     {
         Schema::create('surat_panggilans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('room_id')->constrained('rooms')->onDelete('cascade');
-            $table->string('nama_siswa');
             $table->string('nomor_surat')->unique();
-            $table->dateTime('tanggal_waktu');
+            $table->dateTime('tanggal_waktu'); 
             $table->string('tempat');
             $table->text('tujuan');
             $table->timestamps();
+            $table->string('nama_siswa')->after('updated_at'); 
+            $table->foreignId('room_id')
+                    ->constrained('rooms')
+                    ->onDelete('cascade')
+                    ->after('nama_siswa');
         });
     }
 
