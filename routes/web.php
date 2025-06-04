@@ -11,7 +11,8 @@
     use App\Livewire\Settings\Profile;
     use App\Livewire\Settings\Password;
     use App\Livewire\Settings\Appearance;
-    use App\Http\Controllers\DocumentationController; // Pastikan controller diimpor
+    use App\Http\Controllers\DocumentationController;
+    // use App\Http\Controllers\ClearDataController;
 
     // Halaman awal
     Route::get('/', function () {
@@ -92,6 +93,10 @@
 
     // General Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth', 'verified');
+
+    // Route untuk menghapus semua data
+    // Route::get('/clear-all-data', [ClearDataController::class, 'clearAllData']);
+    // Route::post('/clear-specific-table', [ClearDataController::class, 'clearSpecificTable']);
 
     // Auth routes
     require __DIR__.'/auth.php';

@@ -26,10 +26,10 @@ class SuratPanggilanController extends Controller
 
         // Define allowed filters and their logic
         $allowedFilters = [
-            'nama_siswa'  => fn($q, $v) => $q->whereRaw('LOWER(nama_siswa) LIKE ?', ['%' . mb_strtolower($v) . '%']),
-            'room'        => fn($q, $v) => $q->where('room_id', $v),
-            'nomor_surat' => fn($q, $v) => $q->whereRaw('LOWER(nomor_surat) LIKE ?', ['%' . mb_strtolower($v) . '%']),
-            'tanggal'     => fn($q, $v) => $q->whereDate('tanggal_waktu', $v),
+            'nama_siswa'    => fn($q, $v) => $q->whereRaw('LOWER(nama_siswa) LIKE ?', ['%' . mb_strtolower($v) . '%']),
+            'room'          => fn($q, $v) => $q->where('room_id', $v),
+            'nomor_surat'   => fn($q, $v) => $q->whereRaw('LOWER(nomor_surat) LIKE ?', ['%' . mb_strtolower($v) . '%']),
+            'tanggal'       => fn($q, $v) => $q->whereDate('tanggal_waktu', $v),
         ];
 
         // Apply filters based on request
@@ -65,18 +65,20 @@ class SuratPanggilanController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'nama_siswa'       => 'required|string|max:255',
-            'room_id'          => 'required|exists:rooms,id',
-            'nomor_surat'      => 'required|string|max:100|unique:surat_panggilans,nomor_surat',
-            'tanggal_waktu'    => 'required|date',
-            'tempat'           => 'required|string|max:255',
-            'tujuan'           => 'required|string',
+            'nama_siswa'        => 'required|string|max:255',
+            'room_id'           => 'required|exists:rooms,id',
+            'nomor_surat'       => 'required|string|max:100|unique:surat_panggilans,nomor_surat',
+            'tanggal_waktu'     => 'required|date',
+            'tempat'            => 'required|string|max:255',
+            'tujuan'            => 'required|string',
         ]);
 
         $room = Room::with('jurusan')->findOrFail($data['room_id']);
-        $data['jurusan'] = $room->kode_rooms
-                                . ' - ' . $room->jurusan->nama_jurusan
-                                . ' - ' . $room->tingkatan_rooms;
+        // Kolom 'jurusan' ini tidak ada di tabel, jadi ini hanya untuk data di dalam controller
+        // Jika Anda ingin menyimpannya, tambahkan kolom di migrasi dan fillable di model.
+        $data['jurusan_display'] = $room->kode_rooms
+                                 . ' - ' . $room->jurusan->nama_jurusan
+                                 . ' - ' . $room->tingkatan_rooms;
 
         SuratPanggilan::create($data);
 
@@ -113,18 +115,20 @@ class SuratPanggilanController extends Controller
     public function update(Request $request, SuratPanggilan $suratPanggilan)
     {
         $data = $request->validate([
-            'nama_siswa'       => 'required|string|max:255',
-            'room_id'          => 'required|exists:rooms,id',
-            'nomor_surat'      => 'required|string|max:100|unique:surat_panggilans,nomor_surat,' . $suratPanggilan->id,
-            'tanggal_waktu'    => 'required|date',
-            'tempat'           => 'required|string|max:255',
-            'tujuan'           => 'required|string',
+            'nama_siswa'        => 'required|string|max:255',
+            'room_id'           => 'required|exists:rooms,id',
+            'nomor_surat'       => 'required|string|max:100|unique:surat_panggilans,nomor_surat,' . $suratPanggilan->id,
+            'tanggal_waktu'     => 'required|date',
+            'tempat'            => 'required|string|max:255',
+            'tujuan'            => 'required|string',
         ]);
 
         $room = Room::with('jurusan')->findOrFail($data['room_id']);
-        $data['jurusan'] = $room->kode_rooms
-                                . ' - ' . $room->jurusan->nama_jurusan
-                                . ' - ' . $room->tingkatan_rooms;
+        // Kolom 'jurusan' ini tidak ada di tabel, jadi ini hanya untuk data di dalam controller
+        // Jika Anda ingin menyimpannya, tambahkan kolom di migrasi dan fillable di model.
+        $data['jurusan_display'] = $room->kode_rooms
+                                 . ' - ' . $room->jurusan->nama_jurusan
+                                 . ' - ' . $room->tingkatan_rooms;
 
         $suratPanggilan->update($data);
 
@@ -160,13 +164,16 @@ class SuratPanggilanController extends Controller
         $jabatan_kepala_sekolah = 'Kepala Sekolah';
 
         $pdf = Pdf::loadView('surat_panggilans.template', [
-            'suratPanggilan'    => $surat,
+            'suratPanggilan'        => $surat,
             'nama_kepala_sekolah'   => $nama_kepala_sekolah,
-            'jabatan_kepala_sekolah'    => $jabatan_kepala_sekolah,
+            'jabatan_kepala_sekolah' => $jabatan_kepala_sekolah,
         ])
         ->setPaper('a4', 'portrait');
 
-        return $pdf->download('Surat_Panggilan_'.$surat->nomor_surat.'.pdf');
+        // Bersihkan nomor_surat dari karakter yang tidak valid untuk nama file
+        $cleanNomorSurat = str_replace(['/', '\\'], '-', $surat->nomor_surat); // Ganti / dan \ dengan -
+
+        return $pdf->download('Surat_Panggilan_'.$cleanNomorSurat.'.pdf');
     }
 
     /**
@@ -183,13 +190,16 @@ class SuratPanggilanController extends Controller
         $jabatan_kepala_sekolah = 'Kepala Sekolah';
 
         $pdf = Pdf::loadView('surat_panggilans.template', [
-            'suratPanggilan'    => $surat,
+            'suratPanggilan'        => $surat,
             'nama_kepala_sekolah'   => $nama_kepala_sekolah,
-            'jabatan_kepala_sekolah'    => $jabatan_kepala_sekolah,
+            'jabatan_kepala_sekolah' => $jabatan_kepala_sekolah,
         ])
         ->setPaper('a4', 'portrait');
 
-        return $pdf->stream('Surat_Panggilan_'.$surat->nomor_surat.'.pdf'); // Menggunakan stream()
+        // Bersihkan nomor_surat dari karakter yang tidak valid untuk nama file
+        $cleanNomorSurat = str_replace(['/', '\\'], '-', $surat->nomor_surat); // Ganti / dan \ dengan -
+
+        return $pdf->stream('Surat_Panggilan_'.$cleanNomorSurat.'.pdf'); // Menggunakan stream()
     }
 
     /**
